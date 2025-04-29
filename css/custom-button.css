@@ -1,0 +1,32 @@
+.acf-custom-button {
+    background-color: #0073aa;
+    color: #ffffff;
+    border: none;
+    padding: 4px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    box-sizing: border-box;
+    min-height: 40px;
+    padding-top: 8px;
+    padding-right: 16px;
+    padding-bottom: 8px;
+    padding-left: 16px;
+    background-color: #0783be;
+    border-radius: 6px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgba(16, 24, 40, .2);
+    text-decoration: none;
+    color: #fff !important;
+    transition: all .2s ease-in-out;
+    transition-property: background, border, box-shadow;
+}
+.acf-custom-button:hover {
+    background-color: #005f7a;
+}
+#post-preview, #save-post, #minor-publishing-actions, .misc-pub-section.misc-pub-visibility, a.edit-post-status {
+    display: none !important;
+}

@@ -1,0 +1,250 @@
+/**
+Theme Name: Astra Child
+Author: Sunil
+Author URI: https://psd2web.in
+Description: Astra is the fastest, fully customizable & beautiful theme suitable for blogs, personal portfolios and business websites. It is very lightweight (less than 50KB on frontend) and offers unparalleled speed. Built with SEO in mind, Astra comes with schema.org code integrated so search engines will love your site. Astra offers plenty of sidebar options and widget areas giving you a full control for customizations. Furthermore, we have included special features and templates so feel free to choose any of your favorite page builder plugin to create pages flexibly. Some of the other features: # WooCommerce Ready # Responsive # Compatible with major plugins # Translation Ready # Extendible with premium addons # Regularly updated # Designed, Developed, Maintained & Supported by Brainstorm Force. Looking for a perfect base theme? Look no further. Astra is fast, fully customizable and beautiful theme!
+Version: 1.0.1
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: astra-child
+Template: astra
+*/
+/*--------------------------------------------------------------
+# ACF Tabs & Button Styles
+--------------------------------------------------------------*/
+.acf-tabs {
+    display: flex;
+    border-bottom: 2px solid #ddd;
+    padding: 0;
+    margin-bottom: 20px;
+}
+.acf-tabs li {
+    list-style: none;
+    padding: 12px 20px;
+    background: #f1f1f1;
+    margin-right: 5px;
+    cursor: pointer;
+    border-radius: 6px 6px 0 0;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+.acf-tabs li:hover,
+.acf-tabs li.active {
+    background: #0073aa;
+    color: #fff;
+}
+.acf-tab-content .tab-pane {
+    display: none;
+    padding: 20px;
+    border: 2px solid #ddd;
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    background: #fff;
+}
+.acf-tab-content .tab-pane.active {
+    display: block;
+    animation: fadeIn 0.3s ease-in-out;
+}
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.acf-button.button {
+    padding: 4px 10px;
+    font-size: 0.85rem;
+    background: #0d6efd;
+    color: #fff !important;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+.acf-button.button:hover {
+    background: #0b5ed7;
+}
+/*--------------------------------------------------------------
+# Sidebar Layout & Styling
+--------------------------------------------------------------*/
+.wrapper {
+    display: flex;
+    align-items: stretch;
+    flex-wrap: nowrap;
+}
+/* Sidebar Container */
+#sidebar {
+    min-width: 250px;
+    max-width: 250px;
+    background: #32373d;
+    color: #fff;
+    transition: all 0.3s;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    left: 0px;
+    bottom: 0px;
+    z-index: 999;
+}
+/* Sidebar Header with User Info */
+#sidebar .sidebar-header {
+    padding: 20px 0px;
+    background: #23272b;
+    text-align: center;
+}
+#sidebar .sidebar-header img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 10px;
+}
+#sidebar .sidebar-header h5 {
+    margin: 0;
+    font-size: 16px;
+    color: #f8f9fa;
+}
+/* Sidebar Menu */
+#sidebar ul.components {
+    padding: 20px 0;
+    list-style: none;
+    margin: 0;
+}
+#sidebar ul.components li {
+    padding: 0;
+    font-size: 1em;
+    position: relative;
+    list-style: none;
+}
+#sidebar ul.components li a {
+    color: #dcdcdc;
+    text-decoration: none;
+    display: block;
+    padding: 12px 20px;
+    transition: 0.3s;
+}
+#sidebar ul.components li a:hover {
+    background: #2f89fc;
+    color: #fff;
+}
+/* Dropdown Menus */
+#sidebar ul.components li .dropdown-toggle::after {
+    float: right;
+    position: absolute;
+    right: 10px;
+    transform: translateY(-50%);
+}
+/* #sidebar ul.components ul {
+    padding-left: 15px;
+    display: none;
+} */
+#sidebar ul.components ul li a {
+    padding: 10px 20px;
+    font-size: 0.95em;
+}
+/* #sidebar ul.components li.active>ul {
+    display: block;
+} */
+/* Mini Sidebar Toggle Button */
+#sidebarCollapse {
+    /* display: none; */
+    /* background: #343a40; */
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+}
+#sidebar ul.list-unstyled li a {
+    color: #fff;
+}
+#sidebar ul.list-unstyled li ul li a.dropdown-item:active {
+    color: var(--bs-dropdown-link-active-color);
+    text-decoration: none;
+    background-color: var(--bs-dropdown-link-active-bg);
+}
+#sidebar ul.list-unstyled li ul li a.dropdown-item {
+    color: var(--bs-dropdown-link-active-bg);
+    text-decoration: none;
+    background-color: var(--bs-dropdown-link-active-color);
+}
+@media (max-width: 768px) {
+    #sidebar {
+        margin-left: -250px;
+    }
+    #sidebar.active {
+        margin-left: 0;
+    }
+    #sidebarCollapse {
+        display: block;
+    }
+}
+/* Content Area */
+#content {
+    width: 100%;
+    padding: 20px;
+}
+/*--------------------------------------------------------------
+# Extra: Transition/Toggle Class
+--------------------------------------------------------------*/
+.sidebar-collapsed {
+    min-width: 80px !important;
+    max-width: 80px !important;
+}
+.sidebar-collapsed ul li a span {
+    display: none;
+}
+.sidebar-collapsed .sidebar-header h5 {
+    display: none;
+}
+#sidebar {
+    transition: all 0.3s ease-in-out;
+}
+.sidebar-collapsed ul.components li a i {
+    margin-right: 0;
+    margin-left: 0;
+}
+.sidebar-collapsed .components .collapse {
+    display: none !important;
+}
+/*--------------------------------------
+# Sidebar Menu with Icons
+--------------------------------------*/
+#sidebar ul.components li a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.menu-icon {
+    width: 20px;
+    text-align: center;
+    flex-shrink: 0;
+    font-size: 16px;
+}
+.menu-label {
+    white-space: nowrap;
+}
+/* In collapsed state, hide labels */
+.sidebar-collapsed .menu-label {
+    display: none;
+}
+.sidebar-collapsed .menu-icon {
+    margin: 0 auto;
+}
+aside {
+    background: #32373d;
+}
+.nav-link {
+    font-size: 0.75em;
+}
+.submenu {
+    display: none;
+}
+.menu-item-has-children.active>.submenu {
+    display: block;
+}
+ul.submenu {
+    padding-left: 0px;
+}
