@@ -69,7 +69,17 @@ $clients = new WP_Query($args);
                     <div class="p-2">
                         <div class="container mb-3">
                             <div class="row">
+                                <div class="col-md-6">
+                                    <h3 class="mb-3">Client List</h3>
+                                    <p>Welcome, <?php echo esc_html($user->display_name); ?>! Here are your clients:</p>
+                                    <!-- create new client with parms new_post_id=xxx&stage=draft -->
+
+                                </div>
                                 <div class="col-md-3 ms-auto">
+                                    <a href="<?php echo site_url('/create-client?new_post_id=xxx&stage=draft'); ?> " class="btn btn-primary float-end">Create New Client</a>
+                                </div>
+                                <div class="col-md-3 ms-auto">
+
                                     <form method="get" action="<?php echo esc_url(get_permalink()); ?>" class="d-flex">
                                         <input type="text" name="search_query" value="<?php echo esc_attr($search_query); ?>" placeholder="Search clients..." class="form-control me-2">
                                         <button type="submit" class="btn btn-primary">Search</button>

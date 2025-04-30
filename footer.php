@@ -34,15 +34,5 @@ astra_body_bottom();
 wp_footer();
 ?>
 </body>
-<script type="text/javascript">
-    // Get the button element by its ID
-    const button = document.getElementById('sendemailbtn');
-
-    // Add an event listener to the button for the 'click' event
-    button.addEventListener('click', function() {
-        // Log a message to the console when the button is clicked
-        console.log('Button was clicked!');
-    });
-</script>
 
 </html>

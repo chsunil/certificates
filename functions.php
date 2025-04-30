@@ -35,6 +35,9 @@ require_once get_stylesheet_directory() . '/certification-stages.php';
 // Include shortcodes
 require_once get_stylesheet_directory() . '/shortcodes.php';
 
+// include pdf generation functions
+require_once get_stylesheet_directory() . '/includes/pdf-generation.php';
+
 
 
 add_action('acf/save_post', 'set_post_title_from_acf', 20);
@@ -180,6 +183,47 @@ function enqueue_custom_scripts() {
     );
 }
 add_action('wp_enqueue_scripts', 'enqueue_custom_scripts');
+
+// In functions.php
+function enqueue_generate_pdf_script() {
+    wp_enqueue_script('generate-pdf-js', get_stylesheet_directory_uri() . '/js/generate-pdf.js', array('jquery'), null, true);
+
+    // Localize the nonce and the AJAX URL
+    wp_localize_script('generate-pdf-js', 'wp_vars', array(
+        'ajax_url' => admin_url('admin-ajax.php'),
+        'generate_pdf_nonce' => wp_create_nonce('generate_pdf_nonce') // Creating nonce here
+    ));
+}
+add_action('wp_enqueue_scripts', 'enqueue_generate_pdf_script');
+
+add_action('wp_ajax_generate_pdf', 'generate_pdf_function');
+
+function generate_pdf_function() {
+    // Check nonce for security
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'generate_pdf_nonce')) {
+        error_log('Permission denied for PDF generation. Nonce validation failed.');
+        wp_send_json_error(['message' => 'Invalid nonce.']);
+        die();
+    }
+
+    // Check for the Post ID
+    $post_id = isset($_POST['post_id']) ? intval($_POST['post_id']) : 0;
+    if ($post_id) {
+        $result = generate_sample_pdf($post_id);  // Function to generate PDF
+
+        // Check if PDF generation was successful
+        if ($result) {
+            wp_send_json_success(['message' => 'PDF generated successfully.']);
+        } else {
+            wp_send_json_error(['message' => 'PDF generation failed.']);
+        }
+    } else {
+        wp_send_json_error(['message' => 'Invalid Post ID.']);
+    }
+
+    wp_die();  // Always call wp_die() in AJAX functions
+}
+
 
 function restrict_wp_admin_access() {
     // Check if the user is logged in
@@ -397,3 +441,5 @@ function create_new_client_post() {
     }
 }
 add_action('wp_ajax_create_new_client_post', 'create_new_client_post');
+
+// Hook to handle PDF generation
