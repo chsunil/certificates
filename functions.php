@@ -224,6 +224,97 @@ function generate_pdf_function() {
     wp_die();  // Always call wp_die() in AJAX functions
 }
 
+function enqueue_send_email_script() {
+    wp_enqueue_script('send-email-js', get_stylesheet_directory_uri() . '/js/send-email.js', array('jquery'), null, true);
+    wp_localize_script('send-email-js', 'wp_vars', array(
+        'ajax_url' => admin_url('admin-ajax.php'),
+        'send_email_nonce' => wp_create_nonce('send_email_nonce')
+    ));
+}
+add_action('wp_enqueue_scripts', 'enqueue_send_email_script');
+
+// Action to fetch client email and PDF URL
+add_action('wp_ajax_get_client_email', 'get_client_email');
+
+// Action to fetch client email and PDF URL
+add_action('wp_ajax_get_client_email', 'get_client_email');
+
+function get_client_email() {
+    // Ensure we have the post ID
+    if (isset($_POST['post_id'])) {
+        $post_id = intval($_POST['post_id']);
+
+        // Debugging: Log the post ID and check the fields
+        error_log('Fetching email for post ID: ' . $post_id);
+
+        // Get the client email (updated ACF field)
+        $contact_email = get_field('contact_person_contact_email', $post_id);
+
+        // Get the generated PDF URL and filename (updated ACF field)
+        $pdf_url = get_field('generated_pdf_url', $post_id);
+        $pdf_filename = basename($pdf_url);  // Extract just the filename from the URL
+        $client_name = get_field('organization_name', $post_id);
+        // Debugging: Log the retrieved values
+        // error_log('Contact Email: ' . $contact_email);
+        // error_log('PDF URL: ' . $pdf_url);
+        // error_log('PDF Filename: ' . $pdf_filename);
+
+        if ($contact_email && $pdf_url) {
+            wp_send_json_success([
+                'contact_email' => $contact_email,
+                'pdf_url' => $pdf_url,
+                'pdf_filename' => $pdf_filename,
+                'client_name' => $client_name // Include client name in the response
+            ]);
+        } else {
+            wp_send_json_error(['message' => 'Email or PDF URL not found.']);
+        }
+    } else {
+        wp_send_json_error(['message' => 'Invalid Post ID.']);
+    }
+}
+
+
+// Action to send the email
+add_action('wp_ajax_send_pdf_email', 'send_pdf_email');
+
+function send_pdf_email() {
+    // Check nonce for security
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'send_email_nonce')) {
+        wp_send_json_error(['message' => 'Invalid nonce.']);
+        die();
+    }
+
+    // Get the POST data
+    $to_email = sanitize_email($_POST['to_email']);
+    $subject = sanitize_text_field($_POST['subject']);
+    $message = sanitize_textarea_field($_POST['message']);
+    $pdf_attachment = esc_url($_POST['generated_pdf_url']);
+
+    // Email content
+    $headers = array('Content-Type: text/html; charset=UTF-8');
+    $mail_body = '<p>' . nl2br($message) . '</p>';
+    $mail_body .= '<p><strong>PDF Attachment:</strong> <a href="' . $pdf_attachment . '">Download PDF</a></p>';
+
+    // Send the email
+    $mail_sent = wp_mail($to_email, $subject, $mail_body, $headers);
+
+    if ($mail_sent) {
+        wp_send_json_success(['message' => 'Email sent successfully.']);
+    } else {
+        wp_send_json_error(['message' => 'Failed to send email.']);
+    }
+
+    wp_die();
+}
+
+function enqueue_froala_assets() {
+    // Enqueue Froala WYSIWYG editor CSS and JS files
+    wp_enqueue_style('froala-style', 'https://cdn.jsdelivr.net/npm/froala-editor@3.2.6/css/froala_editor.pkgd.min.css');
+    wp_enqueue_script('froala-js', 'https://cdn.jsdelivr.net/npm/froala-editor@3.2.6/js/froala_editor.pkgd.min.js', array('jquery'), null, true);
+}
+add_action('wp_enqueue_scripts', 'enqueue_froala_assets');
+
 
 function restrict_wp_admin_access() {
     // Check if the user is logged in

@@ -160,12 +160,12 @@ $clients = new WP_Query($args);
     </div>
 </div>
 
-<!-- Modal for Sending Email (Single Modal) -->
+<!-- Modal for Sending Email -->
 <div class="modal fade" id="sendEmailModal" tabindex="-1" aria-labelledby="sendEmailModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="sendEmailModalLabel">Send PDF to Client</h5>
+                <h5 class="modal-title" id="sendEmailModalLabel">Send PDF to Client <span id="clientname"></span></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -175,12 +175,20 @@ $clients = new WP_Query($args);
                         <input type="email" class="form-control" id="toEmail" name="toEmail" readonly>
                     </div>
                     <div class="form-group">
+                        <label for="subject">Subject</label>
+                        <input type="text" class="form-control" id="subject" name="subject" placeholder="Enter email subject">
+                    </div>
+                    <div class="form-group">
                         <label for="message">Message</label>
-                        <textarea class="form-control" id="message" name="message" rows="4"></textarea>
+                        <textarea class="form-control" id="message" name="message" rows="4" placeholder="Enter your message here"></textarea>
                     </div>
                     <div class="form-group">
                         <label for="pdfAttachment">PDF Attachment</label>
                         <input type="hidden" id="pdfAttachment" name="pdfAttachment">
+                    </div>
+                    <div class="form-group">
+                        <label for="pdfFilename">PDF Filename</label>
+                        <p id="pdfFilename"></p> <!-- Display PDF filename here -->
                     </div>
                     <button type="submit" class="btn btn-primary">Send Email</button>
                 </form>
@@ -188,6 +196,7 @@ $clients = new WP_Query($args);
         </div>
     </div>
 </div>
+
 
 <?php get_footer(); ?>
 

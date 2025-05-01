@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
             })
                 .then(response => response.json())
                 .then(data => {
-                    console.log("Response Data:", data); // Log the response data
+                    // console.log("Response Data:", data); // Log the response data
 
                     if (data.success) {
                         alert("PDF generated successfully!");

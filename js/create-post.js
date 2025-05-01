@@ -5,6 +5,9 @@ document.addEventListener("DOMContentLoaded", function () {
     if (!postId) {
         // If no post_id in URL, create a new post via AJAX
         createNewClientPost();
+        console.log("No post_id found in URL. Creating a new post.");
+    } else {
+        console.log("Post ID found in URL:", postId);
     }
 });
 
