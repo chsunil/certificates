@@ -28,7 +28,7 @@
                         <i class="bi bi-person-circle"></i> <?php echo esc_html($user->display_name ?: 'Welcome'); ?>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="/profile">Profile</a></li>
+                        <li><a class="dropdown-item" href="/user-edit/?id=<?php echo $user->ID; ?>">Profile</a></li>
                         <li><a class="dropdown-item" href="<?php echo wp_logout_url(home_url()) ?>">Logout</a></li>
                     </ul>
                 </li>

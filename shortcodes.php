@@ -37,8 +37,14 @@ function wpdevpro_list_auditors_with_search_pagination($atts) {
     $user_query = new WP_User_Query($args);
 
     // Bootstrap Container and Row
-    echo '<div class="container mt-5">';
+    echo '<div class="container">';
     echo '<div class="row mb-4">';
+    echo '<div class="col-md-6">';
+    echo '<h2 class="mb-3">Auditors List</h2>';
+    echo '</div>'; // End of col-md-9
+    echo '<div class="col-md-3 ms-auto">';
+    echo '<a href="' . site_url('/user-add') . '" class="btn btn-success float-end">Add New Auditor</a>';
+    echo '</div>'; // End of col-md-3
 
     // Search Form (right-aligned)
     echo '<div class="col-md-3 ms-auto">';
@@ -80,12 +86,46 @@ function wpdevpro_list_auditors_with_search_pagination($atts) {
                         </td>
                         <td>
                             <a href="<?php echo esc_url(admin_url('user-edit?id=' . $user->ID)); ?>" class="btn btn-sm btn-primary">Edit</a>
-                            <a href="<?php echo esc_url(admin_url('users.php?action=delete&user_id=' . $user->ID)); ?>" class="btn btn-sm btn-danger">Delete</a>
+                            <!-- <a href="<?php echo esc_url(admin_url('users.php?action=delete&user_id=' . $user->ID)); ?>" class="btn btn-sm btn-danger delete-auditor" data-user="<?php echo $user->ID; ?>">Delete</a> -->
+
+                            <button class="btn btn-sm btn-danger delete-auditor" data-user="<?php echo $user->ID; ?>">Delete</button>
+
                         </td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                document.querySelectorAll('.delete-auditor').forEach(button => {
+                    button.addEventListener('click', function() {
+                        if (!confirm('Are you sure you want to delete this user?')) return;
+
+                        let userId = this.getAttribute('data-user');
+
+                        fetch('<?php echo admin_url('admin-ajax.php'); ?>', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded'
+                                },
+                                body: new URLSearchParams({
+                                    action: 'delete_auditor',
+                                    user_id: userId
+                                })
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    alert('User deleted successfully');
+                                    location.reload();
+                                } else {
+                                    alert('Error: ' + data.data);
+                                }
+                            });
+                    });
+                });
+            });
+        </script>
 <?php
     } else {
         echo '<p>No users found.</p>';

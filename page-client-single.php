@@ -2,24 +2,62 @@
 /*
 Template Name: Multi-Step ACF Form with Tabs
 */
-acf_form_head();
-get_header();
-require_once get_stylesheet_directory() . '/certification-stages.php';
 
-$scheme = 'ems';
-$all_stages = get_certification_stages();
-$stages = $all_stages[$scheme] ?? [];
+// ─── 1) ENSURE WE HAVE A VALID client POST ID VIA URL ────────────────────────
 
-$post_id = isset($_GET['new_post_id']) ? intval($_GET['new_post_id']) : 'new_post';
-if ($post_id !== 'new_post' && get_post_status($post_id) === false) {
-    $post_id = 'new_post';
+// Grab ?new_post_id= from the URL (or default to zero)
+$post_id = isset($_GET['new_post_id']) ? intval($_GET['new_post_id']) : 0;
+
+
+// If it’s missing or not actually a published/draft client, we must create one:
+if (! $post_id || get_post_type($post_id) !== 'client') {
+
+    // Try to pull the “Organization Name” from the ACF POST payload (if they just clicked Save).
+    // Replace 'organization_name' with your real ACF field key for organization_name.
+    $org_name = '';
+    if (! empty($_POST['acf']) && is_array($_POST['acf'])) {
+        $org_name = sanitize_text_field($_POST['acf']['organization_name'] ?? '');
+    }
+
+    // Fallback to a timestamped placeholder
+    if (! $org_name) {
+        $org_name = 'Draft Client – ' . current_time('Y-m-d H:i:s');
+    }
+
+    // Insert a brand-new client draft
+    $new_id = wp_insert_post([
+        'post_type'   => 'client',
+        'post_status' => 'publish',
+        'post_title'  => $org_name,
+    ]);
+
+    // If insertion succeeded, redirect back to ourselves with the ID & stage=draft
+    if (! is_wp_error($new_id)) {
+        wp_safe_redirect(add_query_arg([
+            'new_post_id' => $new_id,
+            'stage'       => 'draft',
+        ], get_permalink()));
+        exit;
+    }
+
+    // (If WP_Error, fall through and let ACF show its own error)
 }
 
-$current_stage = ($post_id !== 'new_post')
-    ? get_field('client_stage', $post_id) ?: 'draft'
-    : 'draft';
-$stage_keys = array_keys($stages);
-$current_index = array_search($current_stage, $stage_keys);
+// At this point, $post_id is guaranteed to be a real client ID
+$post_id = intval($_GET['new_post_id']);
+
+// ─── 2) LOAD STAGES & FIGURE OUT CURRENT STAGE ───────────────────────────────
+require_once get_stylesheet_directory() . '/certification-stages.php';
+
+$scheme      = 'ems';
+$all_stages  = get_certification_stages();
+$stages      = $all_stages[$scheme] ?? [];
+
+
+
+// ─── 3) LET ACF & WP OUTPUT THE HEADER & START YOUR FORM ───────────────────
+acf_form_head();
+get_header();
 ?>
 
 <div class="container-fluid p-0">
@@ -33,21 +71,33 @@ $current_index = array_search($current_stage, $stage_keys);
                 <div class="card-body">
 
                     <!-- Tabs -->
+                    <?php
+                    $current_stage = get_field('client_stage', $post_id) ?: 'draft';
+                    $stage_keys    = array_keys($stages);
+                    $current_index = array_search($current_stage, $stage_keys, true);
+                    $stagefrom_url = isset($_GET['stage']) && in_array($_GET['stage'], $stage_keys, true) ? $_GET['stage'] : $current_stage; // Ensure valid stage
+
+                    ?>
+
+                    <!-- Tabs -->
                     <ul class="nav nav-tabs m-0">
                         <?php foreach ($stages as $key => $step): ?>
                             <?php
                             $tab_index = array_search($key, $stage_keys);
                             $is_visible = $tab_index <= $current_index;
+                            $is_active = ($key === $stagefrom_url) ? ' active' : ''; // Fix active class logic
                             ?>
                             <li class="nav-item">
-                                <a class="nav-link <?php echo ($key === $current_stage) ? 'active' : ''; ?> <?php echo (!$is_visible ? 'd-none' : ''); ?>"
-                                    href="#<?php echo esc_attr($key); ?>" id="<?php echo esc_attr($key); ?>-tab"
+                                <a class="nav-link<?php echo $is_active; ?> <?php echo (!$is_visible ? ' d-none' : ''); ?>"
+                                    href="<?php echo esc_url(site_url('/create-client/')); ?>?new_post_id=<?php echo esc_attr($post_id); ?>&stage=<?php echo esc_attr($key); ?>"
+                                    id="<?php echo esc_attr($key); ?>-tab"
                                     <?php echo (!$is_visible ? 'tabindex="-1"' : ''); ?>>
                                     <strong class="text-uppercase"><?php echo esc_html($key); ?></strong><br>
                                 </a>
                             </li>
                         <?php endforeach; ?>
                     </ul>
+
 
                     <!-- Tab Content -->
                     <div class="tab-content">
@@ -95,6 +145,9 @@ $current_index = array_search($current_stage, $stage_keys);
                                     <div class="mt-4 d-flex gap-2">
                                         <?php if ($current_stage != 'f03') : ?>
                                             <button type="submit" name="acf_save_only" value="1" class="btn btn-primary save-button">Save</button>
+                                        <?php elseif (($current_stage == 'draft') || ($current_stage == '')) :   ?>
+                                            <button type="submit" class="btn btn-outline-success next-button"> Save &Next</button>
+
                                         <?php else :
                                         ?>
                                             <!-- Add Send Email Button -->

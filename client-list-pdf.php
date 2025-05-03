@@ -76,7 +76,7 @@ $clients = new WP_Query($args);
 
                                 </div>
                                 <div class="col-md-3 ms-auto">
-                                    <a href="<?php echo site_url('/create-client?new_post_id=xxx&stage=draft'); ?> " class="btn btn-primary float-end">Create New Client</a>
+                                    <a href="<?php echo site_url('/create-client?new_post_id=create&stage=draft'); ?> " class="btn btn-primary float-end">Create New Client</a>
                                 </div>
                                 <div class="col-md-3 ms-auto">
 

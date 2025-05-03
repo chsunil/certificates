@@ -37,7 +37,8 @@ require_once get_stylesheet_directory() . '/shortcodes.php';
 
 // include pdf generation functions
 require_once get_stylesheet_directory() . '/includes/pdf-generation.php';
-
+// includers reposrts.php for dashboard stats
+require_once get_stylesheet_directory() . '/includes/reports.php';
 
 
 add_action('acf/save_post', 'set_post_title_from_acf', 20);
@@ -60,14 +61,18 @@ function set_post_title_from_acf($post_id) {
 
 
 
-function redirect_to_backend_except_admin() {
-    // Check if the user is not an admin and is accessing the frontend
-    if (!current_user_can('administrator') && !is_admin()) {
-        wp_redirect(admin_url());
-        exit;
+function custom_login_redirect($redirect_to, $requested_redirect_to, $user) {
+    // Check if login was successful
+    if (isset($user->roles) && is_array($user->roles)) {
+        // if (in_array('administrator', $user->roles)) {
+        //     return admin_url(); // Redirect admins to the dashboard
+        // } else {
+        return home_url('/dashboard'); // Redirect other users to a custom dashboard
+        // }
     }
-};
-
+    return $redirect_to;
+}
+add_filter('login_redirect', 'custom_login_redirect', 10, 3);
 
 function restrict_clients_by_assigned_employee($query) {
     global $pagenow, $typenow;
@@ -87,10 +92,6 @@ function restrict_clients_by_assigned_employee($query) {
     ));
 }
 add_action('pre_get_posts', 'restrict_clients_by_assigned_employee');
-
-
-
-
 
 // Localize script for AJAX functionality
 function enqueue_create_post_script() {
@@ -156,6 +157,24 @@ function register_custom_sidebar() {
 }
 add_action('widgets_init', 'register_custom_sidebar');
 
+// Enques scripts and styles 
+
+/**
+ * Enqueue local Chart.js for Dashboard template.
+ */
+function child_enqueue_local_chartjs() {
+    // only load on our Dashboard Analytics page template
+    if (is_page_template('page-dashboard.php')) {
+        wp_enqueue_script(
+            'chartjs-local',
+            get_stylesheet_directory_uri() . '/js/chart.js',
+            array(),          // no dependencies
+            '4.3.0',          // version number matching the file you downloaded
+            true              // load in footer
+        );
+    }
+}
+add_action('wp_enqueue_scripts', 'child_enqueue_local_chartjs');
 function ensure_jquery_is_loaded() {
     if (!wp_script_is('jquery', 'enqueued')) {
         wp_enqueue_script('jquery');
@@ -337,7 +356,6 @@ function restrict_wp_admin_access() {
 add_action('admin_init', 'restrict_wp_admin_access');
 ?>
 <?php
-// Add this to your functions.php or appropriate place
 
 function custom_redirect_if_not_logged_in() {
     // Get the current URL dynamically
@@ -533,4 +551,23 @@ function create_new_client_post() {
 }
 add_action('wp_ajax_create_new_client_post', 'create_new_client_post');
 
-// Hook to handle PDF generation
+// delete user
+
+add_action('wp_ajax_delete_auditor', 'delete_auditor_callback');
+add_action('wp_ajax_nopriv_delete_auditor', 'delete_auditor_callback');
+
+function delete_auditor_callback() {
+    if (!isset($_POST['user_id']) || !current_user_can('delete_users')) {
+        wp_send_json_error('Unauthorized action');
+        return;
+    }
+
+    $user_id = intval($_POST['user_id']);
+    require_once(ABSPATH . 'wp-admin/includes/user.php');
+
+    if (wp_delete_user($user_id)) {
+        wp_send_json_success('User deleted successfully');
+    } else {
+        wp_send_json_error('Failed to delete user');
+    }
+}
