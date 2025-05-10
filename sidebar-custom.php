@@ -1,6 +1,11 @@
 <div class="wrapper">
     <!-- Sidebar -->
     <nav id="sidebar" class="">
+        <div class="custom-menu">
+
+            <button type="button" id="sidebarCollapse" class="btn btn-primary">
+            </button>
+        </div>
         <div class="sidebar-header">
             <?php
             $user = wp_get_current_user();
@@ -8,7 +13,8 @@
 
             // Check if user has a custom avatar
             if (!empty($avatar_url)) {
-                echo '<img src="' . esc_url($avatar_url) . '" alt="User Avatar">';
+                // echo '<img src="' . esc_url($avatar_url) . '" alt="User Avatar">';
+                astra_logo();
             } else {
                 // Fallback to site logo
                 if (function_exists('astra_logo')) {
@@ -20,22 +26,20 @@
             }
             ?>
 
-            <h5></h5>
 
             <ul class="list-unstyled m-0">
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="bi bi-person-circle"></i> <?php echo esc_html($user->display_name ?: 'Welcome'); ?>
+                    <a href="#" class="dropdown-toggle user-displayname" data-bs-toggle="dropdown" aria-expanded="false">
+                        <?php echo esc_html($user->display_name ?: 'Welcome'); ?>
                     </a>
+
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="/user-edit/?id=<?php echo $user->ID; ?>">Profile</a></li>
                         <li><a class="dropdown-item" href="<?php echo wp_logout_url(home_url()) ?>">Logout</a></li>
                     </ul>
                 </li>
             </ul>
-            <button type="button" id="sidebarCollapse" class="btn btn-dark">
-                <i class="fas fa-bars"></i>
-            </button>
+
         </div>
         <!-- Button trigger modal -->
         <?php

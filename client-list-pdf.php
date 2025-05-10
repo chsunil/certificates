@@ -71,7 +71,6 @@ $clients = new WP_Query($args);
                             <div class="row">
                                 <div class="col-md-6">
                                     <h3 class="mb-3">Client List</h3>
-                                    <p>Welcome, <?php echo esc_html($user->display_name); ?>! Here are your clients:</p>
                                     <!-- create new client with parms new_post_id=xxx&stage=draft -->
 
                                 </div>
@@ -117,7 +116,8 @@ $clients = new WP_Query($args);
                                 $pdf_button =   '<a href="' . esc_url($pdf_url) . '" target="_blank" class="btn btn-primary btn-sm"><i class="fa-regular fa-file-pdf"></i></a>';
                                 $pdf_button .= ' <button class="btn btn-info btn-sm send-email-btn" data-post-id="' . $post_id . '" data-pdf-url="' . $pdf_url . '" data-email="' . get_field('contact_email', $post_id) . '"><i class="fa-regular fa-envelope"></i> Send Email</button>';
                             } else {
-                                $pdf_button =   '<button class="btn btn-success btn-sm generate-pdf" data-post-id="' . $post_id . '"><i class="fa-solid fa-file-circle-plus"></i></button>';
+                                $pdf_button =   '<button class="btn btn-success btn-sm generate-pdf" data-post-id="' . $post_id . '"><i class="fa-solid fa-file-circle-plus"></i>Generate PDF</button>';
+                                // need to remove here
                             }
 
                             // Add client details and PDF button to the table row

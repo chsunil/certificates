@@ -79,7 +79,7 @@ Template: astra
 #sidebar {
     min-width: 250px;
     max-width: 250px;
-    background: #32373d;
+    background: #0061f2;
     color: #fff;
     transition: all 0.3s;
     height: 100vh;
@@ -91,8 +91,7 @@ Template: astra
 }
 /* Sidebar Header with User Info */
 #sidebar .sidebar-header {
-    padding: 20px 0px;
-    background: #23272b;
+    padding: 20px 0px 0px;
     text-align: center;
 }
 #sidebar .sidebar-header img {
@@ -109,7 +108,7 @@ Template: astra
 }
 /* Sidebar Menu */
 #sidebar ul.components {
-    padding: 20px 0;
+    padding: 10px 20px 0;
     list-style: none;
     margin: 0;
 }
@@ -120,10 +119,10 @@ Template: astra
     list-style: none;
 }
 #sidebar ul.components li a {
-    color: #dcdcdc;
+    color: #FFF;
     text-decoration: none;
     display: block;
-    padding: 12px 20px;
+    padding: 12px 10px;
     transition: 0.3s;
 }
 #sidebar ul.components li a:hover {
@@ -196,7 +195,7 @@ Template: astra
 .sidebar-collapsed ul li a span {
     display: none;
 }
-.sidebar-collapsed .sidebar-header h5 {
+.sidebar-collapsed .sidebar-header .user-displayname {
     display: none;
 }
 #sidebar {
@@ -234,7 +233,7 @@ Template: astra
     margin: 0 auto;
 }
 aside {
-    background: #32373d;
+    background: #0061f2;
 }
 .nav-link {
     font-size: 0.75em;
@@ -247,4 +246,43 @@ aside {
 }
 ul.submenu {
     padding-left: 0px;
+}
+#sidebar .custom-menu {
+    display: inline-block;
+    position: absolute;
+    top: 20px;
+    right: 0;
+    margin-right: -35px;
+    -webkit-transition: 0.3s;
+    -o-transition: 0.3s;
+    transition: 0.3s;
+}
+#sidebar .custom-menu .btn {
+    background: #2f89fc;
+    border-color: transparent;
+    position: relative;
+    color: #000;
+    width: 30px;
+    height: 30px;
+}
+#sidebar .custom-menu .btn:after {
+    content: "\f054";
+    left: 2px;
+}
+#sidebar.sidebar-collapsed .custom-menu .btn:after {
+    content: "\f053";
+    left: 2px;
+}
+#sidebar .custom-menu .btn:after, #sidebar .custom-menu .btn:after {
+    position: absolute;
+    top: 2px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    font-family: "FontAwesome";
+    color: #fff;
+}
+.btn:focus {
+    background: #2f89fc !important;
+    border-color: #2f89fc !important;
 }
