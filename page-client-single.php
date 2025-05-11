@@ -49,7 +49,9 @@ $post_id = intval($_GET['new_post_id']);
 // ─── 2) LOAD STAGES & FIGURE OUT CURRENT STAGE ───────────────────────────────
 require_once get_stylesheet_directory() . '/certification-stages.php';
 
-$scheme      = 'ems';
+$scheme = get_field('certification_type', $post_id) ?: 'ems'; // Fallback to 'ems' if not set
+$scheme = sanitize_text_field($scheme); // Sanitize the scheme value
+$scheme = strtolower($scheme); // Ensure it's lowercase
 $all_stages  = get_certification_stages();
 $stages      = $all_stages[$scheme] ?? [];
 
@@ -150,12 +152,21 @@ get_header();
 
                                         <?php else :
                                         ?>
-                                            <!-- Add Send Email Button -->
-                                            <!-- Button to trigger modal -->
-                                            <button type="button" class="btn btn-warning send-email-btn" data-bs-toggle="modal" data-bs-target="#send-email-btn">
-                                                Send Email
-                                            </button>
 
+                                            <!-- Button to trigger modal -->
+
+                                            <?php
+                                            $email_stages = ['f03', 'f06', 'f08', 'f11', 'f13'];
+                                            if (in_array($current_stage, $email_stages)) :
+                                            ?>
+                                                <button type="button"
+                                                    class="btn btn-warning send-email-btn"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#sendEmailModal"
+                                                    data-post-id="<?php echo esc_attr($post_id); ?>">
+                                                    Send Email
+                                                </button>
+                                            <?php endif; ?>
                                         <?php endif; ?>
                                         <button type="submit" class="btn btn-outline-success next-button d-none">Next</button>
                                     </div>
@@ -173,19 +184,37 @@ get_header();
 
 
 <!-- Modal -->
-<div class="modal fade" id="send-email-btn" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog">
+<div class="modal fade" id="sendEmailModal" tabindex="-1" aria-labelledby="sendEmailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="staticBackdropLabel">Modal title</h1>
+                <h5 class="modal-title" id="sendEmailModalLabel">Send PDF to Client <span id="clientname"></span></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                ...
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Understood</button>
+                <form id="sendEmailForm">
+                    <div class="form-group">
+                        <label for="toEmail">To (Client's Email)</label>
+                        <input type="email" class="form-control" id="toEmail" name="toEmail" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="subject">Subject</label>
+                        <input type="text" class="form-control" id="subject" name="subject" placeholder="Enter email subject">
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea class="form-control" id="message" name="message" rows="4" placeholder="Enter your message here"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="pdfAttachment">PDF Attachment</label>
+                        <input type="hidden" id="pdfAttachment" name="pdfAttachment">
+                    </div>
+                    <div class="form-group">
+                        <label for="pdfFilename">PDF Filename</label>
+                        <p id="pdfFilename"></p> <!-- Display PDF filename here -->
+                    </div>
+                    <button type="submit" class="btn btn-primary">Send Email</button>
+                </form>
             </div>
         </div>
     </div>

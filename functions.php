@@ -458,3 +458,60 @@ function delete_auditor_callback() {
         wp_send_json_error('Failed to delete user');
     }
 }
+
+
+// Fetch client email and PDF data
+add_action('wp_ajax_get_client_email', 'ajax_get_client_email');
+function ajax_get_client_email() {
+    $post_id = intval($_POST['post_id']);
+    $contact_email = get_field('contact_person_contact_email', $post_id);
+    $pdf_url = get_field('generated_pdf_url', $post_id);
+    $pdf_filename = basename($pdf_url);
+
+    if (!$contact_email || !$pdf_url) {
+        wp_send_json_error('Missing email or PDF data');
+    }
+
+    wp_send_json_success([
+        'contact_email' => $contact_email,
+        'pdf_url'       => $pdf_url,
+        'pdf_filename'  => $pdf_filename
+    ]);
+}
+
+// Send email with PDF
+add_action('wp_ajax_send_pdf_email', 'ajax_send_pdf_email');
+function ajax_send_pdf_email() {
+    // Verify nonce
+    if (!wp_verify_nonce($_POST['nonce'], 'send_email_nonce')) {
+        wp_send_json_error('Nonce verification failed');
+    }
+
+    // Get POST data
+    $to = sanitize_email($_POST['to_email']);
+    $subject = sanitize_text_field($_POST['subject']);
+    $message = wp_kses_post($_POST['message']);
+    $pdf_url = esc_url_raw($_POST['pdf_attachment']);
+
+    // Set headers for HTML email
+    $headers = ['Content-Type: text/html; charset=UTF-8'];
+
+    // Attach PDF
+    $attachments = [];
+    if ($pdf_url) {
+        $upload_dir = wp_upload_dir();
+        $pdf_path = str_replace($upload_dir['baseurl'], $upload_dir['basedir'], $pdf_url);
+        if (file_exists($pdf_path)) {
+            $attachments[] = $pdf_path;
+        }
+    }
+
+    // Send email
+    $sent = wp_mail($to, $subject, $message, $headers, $attachments);
+
+    if ($sent) {
+        wp_send_json_success('Email sent');
+    } else {
+        wp_send_json_error('Failed to send email');
+    }
+}

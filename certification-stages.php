@@ -21,5 +21,106 @@ function get_certification_stages() {
             'f24'       => ['title' => 'F-24 Customer Feedback', 'group' => '', 'next' => 'completed'],
             'completed' => ['title' => 'Completed', 'group' => '', 'next' => null],
         ],
+        'qms' => [
+            'draft'     => ['title' => 'Draft', 'group' => 'group_67dc014741369', 'next' => 'f01'],
+            'f01'       => ['title' => 'F-01 QMS Application', 'group' => 'group_68173ed286e57', 'next' => 'f02'],
+            'f02'       => ['title' => 'F-02 QMS Application Review', 'group' => 'group_f02_technical_review', 'next' => 'f03'],
+            'f03'       => ['title' => 'F-03 Certification Agreement', 'group' => 'group_67e6940d632ef', 'next' => 'f05'],
+            // Add more stages as needed
+        ],
+        // Add more certification types as needed
+    ];
+}
+
+
+// Add email templates for EMS stages
+function get_certification_emails() {
+    return [
+        'ems' => [
+            'f03' => [
+                'subject' => 'EMS Certification Agreement Ready',
+                'message' => '
+                    <p>Dear {{client_name}},</p>
+                    <p>Your EMS Certification Agreement (F-03) is attached.</p>
+                    <p>Download: <a href="{{pdf_link}}">{{pdf_name}}</a></p>
+                    <p>Regards,<br>Certification Team</p>
+                '
+            ],
+            'f06' => [
+                'subject' => 'EMS Document Review Report',
+                'message' => '
+                    <p>Dear {{client_name}},</p>
+                    <p>Your Document Review Report (F-06) is attached.</p>
+                    <p>Download: <a href="{{pdf_link}}">{{pdf_name}}</a></p>
+                '
+            ],
+            'f08' => [
+                'subject' => 'EMS Audit Schedule Stage 2',
+                'message' => '
+                    <p>Dear {{client_name}},</p>
+                    <p>Your Stage 2 Audit Schedule (F-08) is attached.</p>
+                    <p>Download: <a href="{{pdf_link}}">{{pdf_name}}</a></p>
+                '
+            ],
+            'f11' => [
+                'subject' => 'EMS Stage 1 Audit Report',
+                'message' => '
+                    <p>Dear {{client_name}},</p>
+                    <p>Your Stage 1 Audit Report (F-11) is attached.</p>
+                    <p>Download: <a href="{{pdf_link}}">{{pdf_name}}</a></p>
+                '
+            ],
+            'f13' => [
+                'subject' => 'EMS Attendance Sheet Stage 2',
+                'message' => '
+                    <p>Dear {{client_name}},</p>
+                    <p>Your Attendance Sheet (F-13) is attached.</p>
+                    <p>Download: <a href="{{pdf_link}}">{{pdf_name}}</a></p>
+                '
+            ]
+        ],
+        'qms' => [
+            'f03' => [
+                'subject' => 'QMS Certification Agreement Ready',
+                'message' => '
+                    <p>Dear {{client_name}},</p>
+                    <p>Your QMS Certification Agreement (F-03) is attached.</p>
+                    <p>Download: <a href="{{pdf_link}}">{{pdf_name}}</a></p>
+                    <p>Regards,<br>Certification Team</p>
+                '
+            ],
+            'f06' => [
+                'subject' => 'QMS Document Review Report',
+                'message' => '
+                    <p>Dear {{client_name}},</p>
+                    <p>Your Document Review Report (F-06) is attached.</p>
+                    <p>Download: <a href="{{pdf_link}}">{{pdf_name}}</a></p>
+                '
+            ],
+            'f08' => [
+                'subject' => 'QMS Audit Schedule Stage 2',
+                'message' => '
+                    <p>Dear {{client_name}},</p>
+                    <p>Your Stage 2 Audit Schedule (F-08) is attached.</p>
+                    <p>Download: <a href="{{pdf_link}}">{{pdf_name}}</a></p>
+                '
+            ],
+            'f11' => [
+                'subject' => 'QMS Stage 1 Audit Report',
+                'message' => '
+                    <p>Dear {{client_name}},</p>
+                    <p>Your Stage 1 Audit Report (F-11) is attached.</p>
+                    <p>Download: <a href="{{pdf_link}}">{{pdf_name}}</a></p>
+                '
+            ],
+            'f13' => [
+                'subject' => 'QMS Attendance Sheet Stage 2',
+                'message' => '
+                    <p>Dear {{client_name}},</p>
+                    <p>Your Attendance Sheet (F-13) is attached.</p>
+                    <p>Download: <a href="{{pdf_link}}">{{pdf_name}}</a></p>
+                '
+            ]
+        ]
     ];
 }
