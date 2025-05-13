@@ -465,7 +465,15 @@ add_action('wp_ajax_get_client_email', 'ajax_get_client_email');
 function ajax_get_client_email() {
     $post_id = intval($_POST['post_id']);
     $contact_email = get_field('contact_person_contact_email', $post_id);
-    $pdf_url = get_field('generated_pdf_url', $post_id);
+    $email_templates = get_certification_emails();
+    $scheme = get_field('certification_type', $post_id);
+    $current_stage = get_field('client_stage', $post_id);
+    $pdf_field = $email_templates[$scheme][$current_stage]['pdf_field'] ?? '';
+    $email_templates = get_certification_emails();
+    $scheme = get_field('certification_type', $post_id);
+    $current_stage = get_field('client_stage', $post_id);
+    $pdf_field = $email_templates[$scheme][$current_stage]['pdf_field'] ?? '';
+    $pdf_url = get_field($pdf_field, $post_id);
     $pdf_filename = basename($pdf_url);
 
     if (!$contact_email || !$pdf_url) {

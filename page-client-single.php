@@ -156,8 +156,9 @@ get_header();
                                             <!-- Button to trigger modal -->
 
                                             <?php
-                                            $email_stages = ['f03', 'f06', 'f08', 'f11', 'f13'];
-                                            if (in_array($current_stage, $email_stages)) :
+                                            $email_templates = get_certification_emails();
+                                            $scheme = get_field('certification_type', $post_id);
+                                            if (isset($email_templates[$scheme][$current_stage])) :
                                             ?>
                                                 <button type="button"
                                                     class="btn btn-warning send-email-btn"
@@ -195,11 +196,11 @@ get_header();
                 <form id="sendEmailForm">
                     <div class="form-group">
                         <label for="toEmail">To (Client's Email)</label>
-                        <input type="email" class="form-control" id="toEmail" name="toEmail" readonly>
+                        <input type="email" class="form-control" id="toEmail" name="toEmail" required placeholder="Enter client's email">
                     </div>
                     <div class="form-group">
                         <label for="subject">Subject</label>
-                        <input type="text" class="form-control" id="subject" name="subject" placeholder="Enter email subject">
+                        <input type="text" class="form-control" id="subject" name="subject" required placeholder="Enter email subject">
                     </div>
                     <div class="form-group">
                         <label for="message">Message</label>

@@ -32,6 +32,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         document.getElementById('pdfFilename').innerText = data.data.pdf_filename;
 
                         // Initialize Froala WYSIWYG Editor for the message field
+
                         new FroalaEditor('#message', {
                             theme: 'royal',  // You can customize this if needed
                             height: 250,
