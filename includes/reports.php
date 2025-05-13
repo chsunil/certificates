@@ -45,7 +45,7 @@ function ajax_get_new_clients_30d() {
     wp_send_json_success($data);
 }
 
-// 1D) AJAX: Recent Client Activity (last 10 modified)
+// 1D) AJAX: Recent Client Activity (recently  modified)
 add_action('wp_ajax_get_recent_client_activity', 'ajax_get_recent_client_activity');
 function ajax_get_recent_client_activity() {
     $q = new WP_Query([
@@ -53,14 +53,15 @@ function ajax_get_recent_client_activity() {
         'post_status'    => 'publish',
         'orderby'        => 'modified',
         'order'          => 'DESC',
-        'posts_per_page' => 10,
+        'posts_per_page' => 4,
     ]);
     $items = [];
     while ($q->have_posts()) {
         $q->the_post();
         $items[] = [
             'title' => get_the_title(),
-            'link'  => get_permalink(),
+            // 'link'  => get_permalink(),
+            'link' => get_home_url() . '/create-client/?new_post_id=' . intval(get_the_ID()),
             'stage' => get_field('client_stage', get_the_ID()) ?: '—',
             'when'  => human_time_diff(get_the_modified_time('U'), current_time('timestamp')) . ' ago',
         ];

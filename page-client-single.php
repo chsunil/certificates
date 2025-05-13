@@ -121,10 +121,14 @@ get_header();
                                     $pdf_url = get_field('generated_pdf_url', $post_id);
 
                                     // If the PDF URL exists, embed it in an iframe
+
                                     if ($pdf_url) {
-                                        echo '<iframe src="' . esc_url($pdf_url) . '" width="100%" height="600px"></iframe>';
+                                        // echo '<iframe src="' . esc_url($pdf_url) . '" width="100%" height="600px"></iframe>';
+                                        echo ' <object width="100%" height="650" type="application/pdf" data="' . esc_url($pdf_url) . '#zoom=95&scrollbar=1" id="pdf_content">     
+    </object>';
                                     } else {
                                         echo '<p>No PDF available. Please generate the PDF first.</p>';
+                                        echo  '<button class="btn btn-success btn-sm generate-pdf" data-post-id="' . $post_id . '"><i class="fa-solid fa-file-circle-plus"></i>Generate PDF</button>';
                                     }
                                 }
                                 ?>
@@ -160,11 +164,13 @@ get_header();
                                             $scheme = get_field('certification_type', $post_id);
                                             if (isset($email_templates[$scheme][$current_stage])) :
                                             ?>
+
                                                 <button type="button"
                                                     class="btn btn-warning send-email-btn"
                                                     data-bs-toggle="modal"
                                                     data-bs-target="#sendEmailModal"
                                                     data-post-id="<?php echo esc_attr($post_id); ?>">
+                                                    <i class="fa-regular fa-envelope"></i>
                                                     Send Email
                                                 </button>
                                             <?php endif; ?>

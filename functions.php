@@ -25,9 +25,7 @@ function child_enqueue_styles() {
 
 add_action('wp_enqueue_scripts', 'child_enqueue_styles', 15);
 
-add_action('init', function () {
-    load_plugin_textdomain('astra', false, dirname(plugin_basename(__FILE__)) . '/languages');
-});
+
 
 require_once get_stylesheet_directory() . '/certification-stages.php';
 
@@ -220,6 +218,7 @@ function enqueue_froala_assets() {
     wp_enqueue_script('froala-js', 'https://cdn.jsdelivr.net/npm/froala-editor@3.2.6/js/froala_editor.pkgd.min.js', array('jquery'), null, true);
 }
 add_action('wp_enqueue_scripts', 'enqueue_froala_assets');
+
 
 
 function restrict_wp_admin_access() {
