@@ -5,6 +5,8 @@ Template Name: Multi-Step ACF Form with Tabs
 
 // ─── 1) ENSURE WE HAVE A VALID client POST ID VIA URL ────────────────────────
 
+// Grab ?new_post_id= from the URL (or default to zero)
+$post_id = isset($_GET['new_post_id']) ? intval($_GET['new_post_id']) : 0;
 
 
 // If it’s missing or not actually a published/draft client, we must create one:
@@ -54,30 +56,6 @@ $all_stages  = get_certification_stages();
 $stages      = $all_stages[$scheme] ?? [];
 
 
-// Get the client's actual current stage (from post meta)
-$current_stage = get_field('client_stage', $post_id) ?: 'draft';
-
-// Get the stage from the URL (sanitize it)
-$stage_from_url = isset($_GET['stage']) ? sanitize_text_field($_GET['stage']) : $current_stage;
-
-// Get all valid stage keys (e.g., ['draft', 'f01', 'f02', ...])
-$valid_stages = array_keys($stages);
-
-// If URL stage is invalid, default to current stage
-if (!in_array($stage_from_url, $valid_stages, true)) {
-    $stage_from_url = $current_stage;
-}
-
-// If URL stage is ahead of current progress, redirect to current stage
-$url_stage_index = array_search($stage_from_url, $valid_stages);
-$current_stage_index = array_search($current_stage, $valid_stages);
-if ($url_stage_index > $current_stage_index) {
-    wp_safe_redirect(add_query_arg([
-        'new_post_id' => $post_id,
-        'stage' => $current_stage,
-    ], get_permalink()));
-    exit;
-}
 
 // ─── 3) LET ACF & WP OUTPUT THE HEADER & START YOUR FORM ───────────────────
 acf_form_head();
@@ -96,9 +74,11 @@ get_header();
 
                     <!-- Tabs -->
                     <?php
-                    $tab_index = array_search($key, $valid_stages);
-                    $is_visible = $tab_index <= $current_stage_index; // Hide future tabs
-                    $is_active = ($key === $stage_from_url); // Active tab = URL stage (if valid)
+                    $current_stage = get_field('client_stage', $post_id) ?: 'draft';
+                    $stage_keys    = array_keys($stages);
+                    $current_index = array_search($current_stage, $stage_keys, true);
+                    $stagefrom_url = isset($_GET['stage']) && in_array($_GET['stage'], $stage_keys, true) ? $_GET['stage'] : $current_stage; // Ensure valid stage
+
                     ?>
 
                     <!-- Tabs -->
@@ -107,19 +87,14 @@ get_header();
                             <?php
                             $tab_index = array_search($key, $stage_keys);
                             $is_visible = $tab_index <= $current_index;
-                            $is_active = ($key === $current_stage) ? ' active' : '';
+                            $is_active = ($key === $stagefrom_url) ? ' active' : ''; // Fix active class logic
                             ?>
-
                             <li class="nav-item">
-                                <a class="nav-link <?php echo esc_attr($key); ?>"
-                                    href="<?php echo esc_url(add_query_arg([
-                                                'new_post_id' => $post_id,
-                                                'stage' => $key,
-                                            ], get_permalink())); ?>"
+                                <a class="nav-link<?php echo $is_active; ?> <?php echo (!$is_visible ? ' d-none' : ''); ?>"
+                                    href="<?php echo esc_url(site_url('/create-client/')); ?>?new_post_id=<?php echo esc_attr($post_id); ?>&stage=<?php echo esc_attr($key); ?>"
                                     id="<?php echo esc_attr($key); ?>-tab"
-                                    <?php echo !$is_visible ? 'tabindex="-1" aria-disabled="true"' : ''; ?>>
+                                    <?php echo (!$is_visible ? 'tabindex="-1"' : ''); ?>>
                                     <strong class="text-uppercase"><?php echo esc_html($key); ?></strong><br>
-                                    <?php echo esc_html($step['title']); ?>
                                 </a>
                             </li>
                         <?php endforeach; ?>

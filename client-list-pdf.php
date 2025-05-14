@@ -76,7 +76,8 @@ $clients = new WP_Query($args);
                                 <div class="col-md-4">
                                 </div>
                                 <div class="col-md-5 ms-auto">
-                                    <a href="<?php echo site_url('/create-client?new_post_id=create&stage=draft'); ?> " class="btn btn-success float-start mx-3"><span class="fas fa-plus" style="padding-right: 10px;"></span>Create New Client</a>
+                                    <a href="<?php echo esc_url(site_url('/create-client?new_post_id=create&stage=draft')); ?> " class="btn btn-success float-start mx-3"><span class="fas fa-plus" style="padding-right: 10px;"></span>Create New Client</a>
+
                                     <form method="get" action="<?php echo esc_url(get_permalink()); ?>" class="d-flex">
                                         <input type="text" name="search_query" value="<?php echo esc_attr($search_query); ?>" placeholder="Search Clients..." class="form-control me-2">
                                         <button type="submit" class="btn btn-primary">Search</button>
@@ -134,15 +135,27 @@ $clients = new WP_Query($args);
                         echo '</table>';
                         // Add Bootstrap-style pagination
                         $big = 999999999;
-                        echo '<nav aria-label="Page navigation example">';
+                        // Pagination
+                        echo '<nav aria-label="Page navigation">';
                         echo '<ul class="pagination justify-content-end">';
-                        echo '<li class="page-item' . ($paged == 1 ? ' disabled' : '') . '"><a class="page-link" href="' . esc_url(get_pagenum_link(1)) . '" tabindex="-1">Previous</a></li>';
 
+                        // Previous link
+                        echo '<li class="page-item' . ($paged == 1 ? ' disabled' : '') . '">';
+                        echo '<a class="page-link" href="' . esc_url(add_query_arg('paged', max(1, $paged - 1))) . '">Previous</a>';
+                        echo '</li>';
+
+                        // Page numbers
                         for ($i = 1; $i <= $clients->max_num_pages; $i++) {
-                            echo '<li class="page-item' . ($i == $paged ? ' active' : '') . '"><a class="page-link" href="' . esc_url(get_pagenum_link($i)) . '">' . $i . '</a></li>';
+                            echo '<li class="page-item' . ($i == $paged ? ' active' : '') . '">';
+                            echo '<a class="page-link" href="' . esc_url(add_query_arg('paged', $i)) . '">' . $i . '</a>';
+                            echo '</li>';
                         }
 
-                        echo '<li class="page-item' . ($paged == $clients->max_num_pages ? ' disabled' : '') . '"><a class="page-link" href="' . esc_url(get_pagenum_link($clients->max_num_pages)) . '">Next</a></li>';
+                        // Next link
+                        echo '<li class="page-item' . ($paged == $clients->max_num_pages ? ' disabled' : '') . '">';
+                        echo '<a class="page-link" href="' . esc_url(add_query_arg('paged', min($clients->max_num_pages, $paged + 1))) . '">Next</a>';
+                        echo '</li>';
+
                         echo '</ul>';
                         echo '</nav>';
                     } else {
