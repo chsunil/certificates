@@ -20,14 +20,17 @@ $roles = $user->roles; // Current user roles
 
 // Check if the user is an admin or manager
 $is_admin_or_manager = in_array('administrator', $roles) || in_array('manager', $roles);
-
+// Pagination and search parameters
+$paged = (get_query_var('paged')) ? get_query_var('paged') : 1; // Default to page 1 if not set
+$per_page = 8; // Number of clients per page
 // Get search query if available
 $search_query = isset($_GET['search_query']) ? sanitize_text_field($_GET['search_query']) : '';
 
 // Query clients assigned to the logged-in user or show all clients if admin/manager
 $args = array(
-    'post_type'      => 'client',
-    'posts_per_page' => -1, // Show all clients for FooTable pagination
+    'post_type'      => 'client',  // Assuming 'client' is the post type
+    'posts_per_page' => $per_page,
+    'paged'          => $paged,  // Add pagination
 );
 
 // If the user is an admin or manager, show all clients; otherwise, only their clients
@@ -42,6 +45,8 @@ if (!$is_admin_or_manager) {
 }
 
 // If there is a search query, add it to the query
+$search_query = isset($_GET['search_query']) ? sanitize_text_field($_GET['search_query']) : '';
+
 if ($search_query) {
     $args['s'] = $search_query;
 }
@@ -65,11 +70,19 @@ $clients = new WP_Query($args);
                     <div class="p-2">
                         <div class="container mb-3">
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-md-3">
                                     <h3 class="mb-3">Client List</h3>
                                 </div>
-                                <div class="col-md-3 ms-auto">
-                                    <a href="<?php echo site_url('/create-client?new_post_id=create&stage=draft'); ?> " class="btn btn-primary float-end">Create New Client</a>
+                                <div class="col-md-4">
+                                </div>
+                                <div class="col-md-5 ms-auto">
+                                    <a href="<?php echo site_url('/create-client?new_post_id=create&stage=draft'); ?> " class="btn btn-success float-start mx-3"><span class="fas fa-plus" style="padding-right: 10px;"></span>Create New Client</a>
+                                    <form method="get" action="<?php echo esc_url(get_permalink()); ?>" class="d-flex">
+                                        <input type="text" name="search_query" value="<?php echo esc_attr($search_query); ?>" placeholder="Search Clients..." class="form-control me-2">
+                                        <button type="submit" class="btn btn-primary">Search</button>
+                                    </form>
+
+
                                 </div>
                             </div>
                         </div>
@@ -122,6 +135,19 @@ $clients = new WP_Query($args);
 
                         echo '</tbody>';
                         echo '</table>';
+                        // Add Bootstrap-style pagination
+                        $big = 999999999;
+                        echo '<nav aria-label="Page navigation example">';
+                        echo '<ul class="pagination justify-content-end">';
+                        echo '<li class="page-item' . ($paged == 1 ? ' disabled' : '') . '"><a class="page-link" href="' . esc_url(get_pagenum_link(1)) . '" tabindex="-1">Previous</a></li>';
+
+                        for ($i = 1; $i <= $clients->max_num_pages; $i++) {
+                            echo '<li class="page-item' . ($i == $paged ? ' active' : '') . '"><a class="page-link" href="' . esc_url(get_pagenum_link($i)) . '">' . $i . '</a></li>';
+                        }
+
+                        echo '<li class="page-item' . ($paged == $clients->max_num_pages ? ' disabled' : '') . '"><a class="page-link" href="' . esc_url(get_pagenum_link($clients->max_num_pages)) . '">Next</a></li>';
+                        echo '</ul>';
+                        echo '</nav>';
                     } else {
                         echo '<p>No clients found.</p>';
                     }
