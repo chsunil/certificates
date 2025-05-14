@@ -8,7 +8,6 @@ Template Name: Multi-Step ACF Form with Tabs
 // Grab ?new_post_id= from the URL (or default to zero)
 $post_id = isset($_GET['new_post_id']) ? intval($_GET['new_post_id']) : 0;
 
-
 // If it’s missing or not actually a published/draft client, we must create one:
 if (! $post_id || get_post_type($post_id) !== 'client') {
 
@@ -77,7 +76,9 @@ get_header();
                     $current_stage = get_field('client_stage', $post_id) ?: 'draft';
                     $stage_keys    = array_keys($stages);
                     $current_index = array_search($current_stage, $stage_keys, true);
-                    $stagefrom_url = isset($_GET['stage']) && in_array($_GET['stage'], $stage_keys, true) ? $_GET['stage'] : $current_stage; // Ensure valid stage
+                    // $stagefrom_url = isset($_GET['stage']) && in_array($_GET['stage'], $stage_keys, true) ? $_GET['stage'] :
+                    $stagefrom_url = isset($_GET['stage']) ? sanitize_text_field($_GET['stage']) : 'draft'; // Ensure valid stage
+                    $current_stage; // Ensure valid stage
 
                     ?>
 
@@ -86,11 +87,17 @@ get_header();
                         <?php foreach ($stages as $key => $step): ?>
                             <?php
                             $tab_index = array_search($key, $stage_keys);
+
                             $is_visible = $tab_index <= $current_index;
-                            $is_active = ($key === $stagefrom_url) ? ' active' : ''; // Fix active class logic
+                            if ((trim($key)) == trim($stagefrom_url)) {
+                                $is_active = ' active';
+                            } else {
+                                $is_active = ' empty';
+                            } // Fix active class logic
                             ?>
+
                             <li class="nav-item">
-                                <a class="nav-link<?php echo $is_active; ?> <?php echo (!$is_visible ? ' d-none' : ''); ?>"
+                                <a class="nav-link <?php echo esc_html($key); ?> <?php echo $is_active; ?> <?php echo (!$is_visible ? ' d-none' : ''); ?>"
                                     href="<?php echo esc_url(site_url('/create-client/')); ?>?new_post_id=<?php echo esc_attr($post_id); ?>&stage=<?php echo esc_attr($key); ?>"
                                     id="<?php echo esc_attr($key); ?>-tab"
                                     <?php echo (!$is_visible ? 'tabindex="-1"' : ''); ?>>

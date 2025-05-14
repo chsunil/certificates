@@ -249,10 +249,9 @@ ul.submenu {
 }
 #sidebar .custom-menu {
     display: inline-block;
-    position: absolute;
-    top: 20px;
-    right: 0;
-    margin-right: -35px;
+    position: fixed;
+    bottom: 20px;
+    left: 30px;
     -webkit-transition: 0.3s;
     -o-transition: 0.3s;
     transition: 0.3s;

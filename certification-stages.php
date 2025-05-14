@@ -3,7 +3,7 @@ function get_certification_stages() {
     return [
         'ems' => [
             'draft'     => ['title' => 'Draft', 'group' => 'group_67dc014741369', 'next' => 'f01'],
-            'f01'       => ['title' => 'F-01 EMS Application', 'group' => 'group_f01_ems', 'next' => 'f02'],
+            'f01'       => ['title' => 'F-01 EMS Application', 'group' => 'group_68222fbec9c41', 'next' => 'f02'],
             'f02'       => ['title' => 'F-02 EMS Application Review', 'group' => 'group_f02_technical_review', 'next' => 'f03'],
             'f03'       => ['title' => 'F-03 Certification Agreement', 'group' => 'group_67e6940d632ef', 'next' => 'f05'],
             'f05'       => ['title' => 'F-05 Audit Team Allocation Plan Stage 2', 'group' => 'group_f05_ems_audit_team_allocation_plan_stage_1', 'next' => 'f06'],
