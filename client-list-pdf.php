@@ -98,7 +98,6 @@ $clients = new WP_Query($args);
                             <th data-breakpoints="xs">Assigned Employee</th>
                             <th>Client Status</th>
                             <th data-breakpoints="xs">Created Date</th>
-                            <th>>Actions</th>
                             </tr></thead>';
                         echo '<tbody>';
 
@@ -127,9 +126,7 @@ $clients = new WP_Query($args);
                             echo '<td>' . esc_html($assigned_employee_name) . '</td>';
                             echo '<td class="text-uppercase">' . esc_html($client_status) . '</td>';
                             echo '<td>' . esc_html($created_date) . '</td>';
-                            echo '<td>';
-                            echo $pdf_button;
-                            echo '</td>';
+
                             echo '</tr>';
                         }
 
