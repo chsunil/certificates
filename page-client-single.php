@@ -128,7 +128,10 @@ get_header();
     </object>';
                                     } else {
                                         echo '<p>No PDF available. Please generate the PDF first.</p>';
-                                        echo  '<button class="btn btn-success btn-sm generate-pdf" data-post-id="' . $post_id . '"><i class="fa-solid fa-file-circle-plus"></i>Generate PDF</button>';
+                                        // echo  '<button class="btn btn-success btn-sm generate-pdf" data-post-id="' . $post_id . '"><i class="fa-solid fa-file-circle-plus"></i>Generate PDF</button>';
+                                        // echo '<button class="btn btn-success btn-sm generate-pdf" data-post-id="' . $post_id . '" data-certification-type="qms" data-stage="3">Generate PDF</button>';
+                                        echo '<button class="btn btn-success btn-sm generate-pdf" data-post-id="' . $post_id . '" data-scheme="qms"
+        data-stage="f03"><i class="fa-solid fa-file-circle-plus"></i> Generate PDF</button>';
                                     }
                                 }
                                 ?>
