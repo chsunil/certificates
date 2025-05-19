@@ -291,3 +291,6 @@ ul.submenu {
     border-top: 0px !important;
     border-bottom: 0px !important;
 }
+table.acf-matrix-field td {
+    padding: 5px 5px !important;
+}
