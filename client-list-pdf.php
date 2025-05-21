@@ -65,7 +65,7 @@ $clients = new WP_Query($args);
         <!-- Main Content -->
         <main id="content" class="flex-fill my-4">
             <div class="shadow-sm">
-                <div class="card-body">
+                <div class="card-body px-2">
                     <!-- Search Form -->
                     <div class="p-2">
                         <div class="container mb-3">
@@ -94,7 +94,7 @@ $clients = new WP_Query($args);
                     if ($clients->have_posts()) {
                         echo '<table class="table table-bordered table-striped table-hover align-middle footable" data-paging="true" data-filtering="true" data-sorting="true" data-page-size="10">';
                         echo '<thead><tr>
-                            <th>Client ID</th>
+                           
                             <th>Client Name</th>
                             <th data-breakpoints="xs">Assigned Employee</th>
                             <th>Client Status</th>
@@ -122,7 +122,7 @@ $clients = new WP_Query($args);
                             }
 
                             echo '<tr>';
-                            echo '<td>' . esc_html($post_id) . '</td>';
+
                             echo '<td> <a href="/create-client/?new_post_id=' . $post_id . '">' . esc_html($client_name) . '</a></td>';
                             echo '<td>' . esc_html($assigned_employee_name) . '</td>';
                             echo '<td class="text-uppercase">' . esc_html($client_status) . '</td>';
