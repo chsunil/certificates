@@ -111,7 +111,7 @@ $clients = new WP_Query($args);
                             $client_status = get_field('client_stage', $post_id);
                             $created_date = get_the_date('d M Y', $post_id);
                             // Get the generated PDF URL if available
-                            $pdf_url = get_field('generated_pdf_url', $post_id);
+                            $pdf_url = get_field('f03_pdf', $post_id);
                             $pdf_button = '';
                             if ($pdf_url) {
                                 $pdf_button =   '<a href="' . esc_url($pdf_url) . '" target="_blank" class="btn btn-primary btn-sm"><i class="fa-regular fa-file-pdf"></i></a>';

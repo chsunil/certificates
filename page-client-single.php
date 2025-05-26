@@ -118,7 +118,7 @@ get_header();
                                 // Check if the current stage is F-03
                                 if ($current_stage === 'f03') {
                                     // Get the PDF URL from ACF field
-                                    $pdf_url = get_field('generated_pdf_url', $post_id);
+                                    $pdf_url = get_field('f03_pdf', $post_id);
 
                                     // If the PDF URL exists, embed it in an iframe
 
@@ -152,34 +152,32 @@ get_header();
                                     ?>
 
                                     <div class="mt-4 d-flex gap-2">
-                                        <?php if ($current_stage != 'f03') : ?>
+                                        <?php if ($current_stage !== 'f03') : ?>
                                             <button type="submit" name="acf_save_only" value="1" class="btn btn-primary save-button">Save</button>
-                                        <?php elseif (($current_stage == 'draft') || ($current_stage == '')) :   ?>
-                                            <button type="submit" class="btn btn-outline-success next-button"> Save &Next</button>
-
-                                        <?php else :
-                                        ?>
-
-                                            <!-- Button to trigger modal -->
-
+                                            <button type="submit" class="btn btn-outline-success next-button">Next</button>
+                                        <?php else : ?>
                                             <?php
                                             $email_templates = get_certification_emails();
                                             $scheme = get_field('certification_type', $post_id);
                                             if (isset($email_templates[$scheme][$current_stage])) :
                                             ?>
-
                                                 <button type="button"
                                                     class="btn btn-warning send-email-btn"
                                                     data-bs-toggle="modal"
                                                     data-bs-target="#sendEmailModal"
-                                                    data-post-id="<?php echo esc_attr($post_id); ?>">
-                                                    <i class="fa-regular fa-envelope"></i>
-                                                    Send Email
+                                                    data-post-id="<?php echo esc_attr($post_id); ?>"
+                                                    data-email="<?php echo esc_attr(get_field('contact_person_contact_email', $post_id)); ?>"
+                                                    data-pdf-url="<?php echo esc_attr(get_field('generated_pdf_url', $post_id)); ?>"
+                                                    data-pdf-filename="<?php echo esc_attr(basename(get_field('generated_pdf_url', $post_id))); ?>">
+                                                    <i class="fa-regular fa-envelope"></i> Send Email
                                                 </button>
                                             <?php endif; ?>
+
+                                            <!-- Always show Next button for F-03 -->
+                                            <button type="submit" class="btn btn-outline-success next-button">Next</button>
                                         <?php endif; ?>
-                                        <button type="submit" class="btn btn-outline-success next-button d-none">Next</button>
                                     </div>
+
                                 </form>
                             </div>
                         <?php endforeach; ?>

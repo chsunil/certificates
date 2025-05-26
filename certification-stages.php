@@ -27,7 +27,9 @@ function get_certification_stages() {
             'f01'       => ['title' => 'F-01 QMS Application', 'group' => 'group_68173ed286e57', 'next' => 'f02'],
             'f02'       => ['title' => 'F-02 QMS Application Review', 'group' => 'group_f02_technical_review', 'next' => 'f03'],
             'f03'       => ['title' => 'F-03 Certification Agreement', 'group' => 'group_67e6940d632ef', 'next' => 'f05'],
-            'sheet6'       => ['title' => 'F-14 Confidentiality', 'group' => '', 'next' => 'f15'],
+            'f05'       => ['title' => 'F-05 EMS_ Audit Team Allocation Plan Stage 1', 'group' => 'group_qms_f05', 'next' => 'f14'],
+            'f14'       => ['title' => 'QMS - F14: Conflict of Interest Declaration', 'group' => 'group_qms_f14', 'next' => 'Sheet6'],
+            'sheet6'       => ['title' => 'QMS - Sheet6: Audit Notification Email', 'group' => 'group_qms_sheet6', 'next' => ''],
 
             // Add more stages as needed
         ],

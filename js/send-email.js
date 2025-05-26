@@ -21,40 +21,46 @@ document.addEventListener("DOMContentLoaded", function () {
                 .then(response => response.json())
                 .then(data => {
                     console.log('Data fetched:', data);
-                    if (data.success) {
-                        // Fill the 'To' field with the contact_email
-                        document.getElementById('toEmail').value = data.data.contact_email;
 
-                        // Pass the PDF URL for attachment
-                        document.getElementById('pdfAttachment').value = data.data.pdf_url;
-
-                        // Display the PDF filename
-                        document.getElementById('pdfFilename').innerText = data.data.pdf_filename;
+                    // Check if the response is successful
+                    if (data.success && data.data) {
+                        const clientData = data.data;
+                        console.log('Client Data:', clientData);
+                        // Fill the modal fields with the fetched data
+                        document.getElementById('toEmail').value = clientData.contact_email;
+                        document.getElementById('pdfAttachment').value = clientData.pdf_url;
+                        document.getElementById('pdfFilename').innerText = clientData.pdf_filename; // Display the PDF filename
+                        document.getElementById('clientname').innerText = clientData.client_name;  // Display the client name in modal header
 
                         // Initialize Froala WYSIWYG Editor for the message field
-
                         new FroalaEditor('#message', {
                             theme: 'royal',  // You can customize this if needed
                             height: 250,
-                            toolbarButtons: [['bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript'], ['fontFamily', 'fontSize', 'textColor', 'backgroundColor'], ['inlineClass', 'inlineStyle', 'clearFormatting']]
+                            toolbarButtons: [
+                                ['bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript'],
+                                ['fontFamily', 'fontSize', 'textColor', 'backgroundColor'],
+                                ['inlineClass', 'inlineStyle', 'clearFormatting']
+                            ]
                         });
 
-                        // Open modal using Bootstrap's Modal class (no jQuery)
+                        // Open the modal
                         const myModal = new bootstrap.Modal(document.getElementById('sendEmailModal'));
                         myModal.show();
                     } else {
-                        console.log('Error fetching email data:', data.message);
+                        console.error('Error fetching email data:', data.message || 'No data received');
+                        alert('Error fetching email data.');
                     }
                 })
                 .catch(error => {
                     console.error("Error fetching email data:", error);
+                    alert('An error occurred while fetching email data.');
                 });
         });
     });
 
     // Handle the Send Email Form submission
     document.getElementById('sendEmailForm').addEventListener('submit', function (e) {
-        e.preventDefault();  // Prevent form submission to handle it via AJAX
+        e.preventDefault();  // Prevent form submission
 
         const toEmail = document.getElementById('toEmail').value;
         const subject = document.getElementById('subject').value;
@@ -93,6 +99,7 @@ document.addEventListener("DOMContentLoaded", function () {
             })
             .catch(error => {
                 console.error("Error sending email:", error);
+                alert("An error occurred while sending the email.");
             });
     });
 });
