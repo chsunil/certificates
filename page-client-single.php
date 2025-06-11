@@ -4,7 +4,9 @@ Template Name: Multi-Step ACF Form with Tabs
 */
 
 // ─── 1) ENSURE WE HAVE A VALID client POST ID VIA URL ────────────────────────
-
+acf_form_head();
+global $post;
+// $post_id = get_the_ID();
 // Grab ?new_post_id= from the URL (or default to zero)
 $post_id = isset($_GET['new_post_id']) ? intval($_GET['new_post_id']) : 0;
 
@@ -71,9 +73,9 @@ get_header();
         <main id="content" class="flex-fill my-4">
             <div class="card shadow-sm">
                 <div class="card-body">
-
                     <!-- Tabs -->
                     <?php
+                    echo $scheme;
                     $current_stage = get_field('client_stage', $post_id) ?: 'draft';
                     $stage_keys    = array_keys($stages);
                     $current_index = array_search($current_stage, $stage_keys, true);
@@ -113,6 +115,7 @@ get_header();
                                 class="tab-pane fade <?php echo ($key === $current_stage) ? 'show active' : ''; ?> <?php echo (!$is_visible ? 'd-none' : ''); ?>"
                                 style="padding-top: 20px;">
                                 <h4>Stage: <?php echo esc_html($step['title']); ?></h4>
+                                <p><?php echo esc_html($step['group']); ?></p>
 
                                 <?php
                                 // Check if the current stage is F-03

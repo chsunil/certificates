@@ -294,3 +294,14 @@ ul.submenu {
 table.acf-matrix-field td {
     padding: 5px 5px !important;
 }
+table.acf-matrix-field th {
+    font-size: 0.75em;
+}
+.acf-field-message .acf-input p{
+    font-size: 0.75em !important;
+    font-style: italic !important;
+}
+.acf-fields>.acf-field{
+    border-top-width: 0px !important;
+    padding: 2px !important;
+}

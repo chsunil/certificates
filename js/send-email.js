@@ -15,7 +15,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 },
                 body: new URLSearchParams({
                     action: 'get_client_email', // PHP action to fetch the contact_email
-                    post_id: postId
+                    post_id: postId,
+                    nonce: wp_vars.get_client_email_nonce
                 })
             })
                 .then(response => response.json())
@@ -33,15 +34,15 @@ document.addEventListener("DOMContentLoaded", function () {
                         document.getElementById('clientname').innerText = clientData.client_name;  // Display the client name in modal header
 
                         // Initialize Froala WYSIWYG Editor for the message field
-                        new FroalaEditor('#message', {
-                            theme: 'royal',  // You can customize this if needed
-                            height: 250,
-                            toolbarButtons: [
-                                ['bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript'],
-                                ['fontFamily', 'fontSize', 'textColor', 'backgroundColor'],
-                                ['inlineClass', 'inlineStyle', 'clearFormatting']
-                            ]
-                        });
+                        // new FroalaEditor('#message', {
+                        //     theme: 'royal',  // You can customize this if needed
+                        //     height: 250,
+                        //     toolbarButtons: [
+                        //         ['bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript'],
+                        //         ['fontFamily', 'fontSize', 'textColor', 'backgroundColor'],
+                        //         ['inlineClass', 'inlineStyle', 'clearFormatting']
+                        //     ]
+                        // });
 
                         // Open the modal
                         const myModal = new bootstrap.Modal(document.getElementById('sendEmailModal'));
@@ -84,17 +85,36 @@ document.addEventListener("DOMContentLoaded", function () {
                 subject: subject,
                 message: message,
                 pdf_attachment: pdfAttachment,
-                nonce: wp_vars.send_email_nonce // Nonce for security
+                nonce: wp_vars.send_pdf_email_nonce // Nonce for security
             })
         })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
                     alert("Email sent successfully!");
-                    const myModal = bootstrap.Modal.getInstance(document.getElementById('sendEmailModal'));
-                    myModal.hide();  // Close the modal
+                    // 1) Get the modal element & instance
+                    const modalEl = document.getElementById('sendEmailModal');
+                    let modal = bootstrap.Modal.getInstance(modalEl);
+                    if (!modal) {
+                        modal = new bootstrap.Modal(modalEl);
+                    }
+
+                    // 2) Hide and dispose of the modal
+                    modal.hide();
+                    modal.dispose();
+
+                    // 3) Remove any leftover backdrops
+                    document.querySelectorAll('.modal-backdrop')
+                        .forEach(el => el.parentNode.removeChild(el));
+
+                    // 4) Remove the Bootstrap “modal-open” class from <body>
+                    document.body.classList.remove('modal-open');
                 } else {
-                    alert("Error: " + data.message);
+                    // First look in json.data.message, then json.message, then fallback
+                    const err = (json.data && json.data.message)
+                        || json.message
+                        || 'Unknown error';
+                    alert("Error: " + err);
                 }
             })
             .catch(error => {

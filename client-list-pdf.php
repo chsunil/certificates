@@ -96,6 +96,7 @@ $clients = new WP_Query($args);
                         echo '<thead><tr>
                            
                             <th>Client Name</th>
+                            <th>Certification Type</th>
                             <th data-breakpoints="xs">Assigned Employee</th>
                             <th>Client Status</th>
                             <th data-breakpoints="xs">Created Date</th>
@@ -106,7 +107,7 @@ $clients = new WP_Query($args);
                             $clients->the_post();
                             $post_id = get_the_ID();
                             $client_name = get_the_title();
-
+                            $certification_type =  get_field('certification_type', $post_id);
                             $assigned_employee_name = do_shortcode('[assigned_employee_name post_id="' . $post_id . '"]');
                             $client_status = get_field('client_stage', $post_id);
                             $created_date = get_the_date('d M Y', $post_id);
@@ -124,6 +125,7 @@ $clients = new WP_Query($args);
                             echo '<tr>';
 
                             echo '<td> <a href="/create-client/?new_post_id=' . $post_id . '">' . esc_html($client_name) . '</a></td>';
+                            echo '<td>' . esc_html($certification_type) . '</td>';
                             echo '<td>' . esc_html($assigned_employee_name) . '</td>';
                             echo '<td class="text-uppercase">' . esc_html($client_status) . '</td>';
                             echo '<td>' . esc_html($created_date) . '</td>';

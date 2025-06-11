@@ -15,6 +15,20 @@
  */
 define('CHILD_THEME_ASTRA_CHILD_VERSION', '1.0.0');
 add_theme_support('page-attributes');
+
+/**
+ * Ensure ACF front-end forms work even inside a shortcode.
+ */
+add_action('wp', function() {
+    // Only on pages that contain our shortcode
+    global $post;
+    if ( isset($post->post_content)
+      && has_shortcode( $post->post_content, 'client_tables' )
+    ) {
+        acf_form_head();
+    }
+});
+
 /**
  * Enqueue styles
  */
@@ -29,9 +43,9 @@ add_action('wp_enqueue_scripts', 'child_enqueue_styles', 15);
 
 require_once get_stylesheet_directory() . '/certification-stages.php';
 
-
 // Include shortcodes
 require_once get_stylesheet_directory() . '/shortcodes.php';
+
 
 // includers reposrts.php for dashboard stats
 require_once get_stylesheet_directory() . '/includes/reports.php';
@@ -199,18 +213,33 @@ function enqueue_custom_scripts() {
 }
 add_action('wp_enqueue_scripts', 'enqueue_custom_scripts');
 
-
-
-
+// function enqueue_send_email_script() {
+//     wp_enqueue_script('send-email-js', get_stylesheet_directory_uri() . '/js/send-email.js', array('jquery'), null, true);
+//     wp_localize_script('send-email-js', 'wp_vars', array(
+//         'ajax_url' => admin_url('admin-ajax.php'),
+//         'send_email_nonce' => wp_create_nonce('send_email_nonce')
+//     ));
+// }
+// add_action('wp_enqueue_scripts', 'enqueue_send_email_script');
 
 function enqueue_send_email_script() {
-    wp_enqueue_script('send-email-js', get_stylesheet_directory_uri() . '/js/send-email.js', array('jquery'), null, true);
-    wp_localize_script('send-email-js', 'wp_vars', array(
-        'ajax_url' => admin_url('admin-ajax.php'),
-        'send_email_nonce' => wp_create_nonce('send_email_nonce')
-    ));
+    wp_enqueue_script(
+        'send-email-js',
+        get_stylesheet_directory_uri() . '/js/send-email.js',
+        ['jquery'],
+        null,
+        true
+    );
+
+    wp_localize_script('send-email-js','wp_vars', [
+        'ajax_url'                  => admin_url('admin-ajax.php'),
+        'get_client_email_nonce'    => wp_create_nonce('get_client_email_nonce'),
+        'send_pdf_email_nonce'      => wp_create_nonce('send_pdf_email_nonce'),
+    ]);
 }
-add_action('wp_enqueue_scripts', 'enqueue_send_email_script');
+add_action('wp_enqueue_scripts','enqueue_send_email_script');
+
+
 
 function enqueue_froala_assets() {
     // Enqueue Froala WYSIWYG editor CSS and JS files
@@ -271,14 +300,26 @@ function get_assigned_employee_name_shortcode($atts) {
         return 'No post ID provided.';
     }
 
-    $user_id = get_field('assigned_employee', $atts['post_id']);
+    $assigned_employee_data = get_field('assigned_employee', $atts['post_id']);
 
-    if ($user_id) {
-        $user = get_user_by('id', $user_id);
-        return esc_html($user->display_name);
+    if ($assigned_employee_data) {
+        $assigned_employee = maybe_unserialize($assigned_employee_data); // Ensure it's an array
+        
+        if (is_array($assigned_employee) && !empty($assigned_employee)) {
+            $employee_names = [];
+
+            foreach ($assigned_employee as $user_id) {
+                $user = get_user_by('id', $user_id);
+                if ($user) {
+                    $employee_names[] = esc_html($user->display_name);
+                }
+            }
+
+            return !empty($employee_names) ? implode(', ', $employee_names) : 'No employees found.';
+        }
     }
 
-    return 'No employee assigned.';
+    return 'No employees assigned.';
 }
 add_shortcode('assigned_employee_name', 'get_assigned_employee_name_shortcode');
 
@@ -468,7 +509,7 @@ function get_client_email_data() {
 
     $post_id = intval($_POST['post_id']);
     $contact_email = get_field('contact_person_contact_email', $post_id);
-    $pdf_url = get_field('generated_pdf_url', $post_id);
+    $pdf_url = get_field('f03_pdf', $post_id);
     $pdf_filename = basename($pdf_url);
     $client_name = get_the_title($post_id);  // Assuming client name is the post title
 
@@ -488,45 +529,50 @@ add_action('wp_ajax_get_client_email', 'get_client_email_data');
 add_action('wp_ajax_nopriv_get_client_email', 'get_client_email_data');
 
 // Send email functionality
-// Send email functionality
-function send_pdf_email() {
-    // Verify nonce
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'send_email_nonce')) {
-        wp_send_json_error(['message' => 'Invalid nonce']);
+add_action('wp_ajax_send_pdf_email','send_pdf_email');
+function send_pdf_email(){
+    // 1) Verify nonce
+    if ( empty($_POST['nonce'])
+      || ! wp_verify_nonce($_POST['nonce'], 'send_pdf_email_nonce')
+    ) {
+        wp_send_json_error([ 'message' => 'Invalid nonce' ], 403);
     }
 
-    // Ensure other necessary fields are set
-    $to_email = sanitize_email($_POST['to_email']);
-    $subject = sanitize_text_field($_POST['subject']);
-    $message = sanitize_textarea_field($_POST['message']);
-    $pdf_attachment = esc_url_raw($_POST['pdf_attachment']);
+    // 2) Sanitize inputs
+    $to       = sanitize_email( $_POST['to_email'] );
+    $subject  = sanitize_text_field( $_POST['subject'] );
+    $message  = wp_kses_post( $_POST['message'] );
+    $pdf_url  = esc_url_raw( $_POST['pdf_attachment'] );
 
-    // Send the email (make sure you have the email function properly set up)
-    $headers = ['Content-Type: text/html; charset=UTF-8'];
-    $mail_sent = wp_mail($to_email, $subject, $message, $headers, $pdf_attachment);
+    if ( empty($to) || empty($subject) || empty($pdf_url) ) {
+        wp_send_json_error([ 'message' => 'Missing required parameters' ], 400);
+    }
 
-    if ($mail_sent) {
-        wp_send_json_success(['message' => 'Email sent successfully']);
+    // 3) Convert URL to server path
+    $upload = wp_get_upload_dir();
+    $baseurl = $upload['baseurl'];
+    $basedir = $upload['basedir'];
+    $filepath = '';
+    if ( 0 === strpos($pdf_url, $baseurl) ) {
+        // replace baseurl with basedir
+        $filepath = str_replace( $baseurl, $basedir, $pdf_url );
+    }
+    if ( ! $filepath || ! file_exists($filepath) ) {
+        wp_send_json_error([ 'message' => 'Unable to locate attachment file' ], 404);
+    }
+
+    // 4) Send email
+    $headers = [ 'Content-Type: text/html; charset=UTF-8' ];
+    $attachments = [ $filepath ];
+    $sent = wp_mail( $to, $subject, $message, $headers, $attachments );
+
+    if ( $sent ) {
+        wp_send_json_success([ 'message' => 'Email sent successfully' ]);
     } else {
-        wp_send_json_error(['message' => 'Email sending failed']);
+        // log debug info
+        error_log("wp_mail failed: to={$to}, subject={$subject}, attachment={$filepath}");
+        wp_send_json_error([ 'message' => 'Email sending failed' ], 500);
     }
 }
 
-add_action('wp_ajax_send_pdf_email', 'send_pdf_email');
 add_action('wp_ajax_nopriv_send_pdf_email', 'send_pdf_email');
-
-
-add_action('wp_ajax_send_pdf_email', 'send_pdf_email');
-add_action('wp_ajax_nopriv_send_pdf_email', 'send_pdf_email');
-// Enqueue the Send Email Script
-function enqueue_send_email_scripts() {
-    // Enqueue the custom script for handling the send email functionality
-    wp_enqueue_script('send-email-js', plugin_dir_url(__FILE__) . 'assets/js/send-email.js', array('jquery'), null, true);
-
-    // Localize AJAX URL and nonce for security
-    wp_localize_script('send-email-js', 'wp_vars', array(
-        'ajax_url' => admin_url('admin-ajax.php'),
-        'send_email_nonce' => wp_create_nonce('send_email_nonce')  // Nonce for security
-    ));
-}
-add_action('wp_enqueue_scripts', 'enqueue_send_email_scripts');
