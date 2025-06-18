@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const postId = this.getAttribute('data-post-id');  // Get the post ID from the button's data attribute
             console.log('Post ID:', postId);
 
-            // Fetch ACF 'contact_person_contact_email' and PDF URL from the current client post
+            // Fetch ACF 'top_management_contact_person_contact_email' and PDF URL from the current client post
             fetch(wp_vars.ajax_url, {
                 method: 'POST',
                 headers: {

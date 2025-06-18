@@ -51,23 +51,26 @@ require_once get_stylesheet_directory() . '/shortcodes.php';
 require_once get_stylesheet_directory() . '/includes/reports.php';
 
 
-add_action('acf/save_post', 'set_post_title_from_acf', 20);
-function set_post_title_from_acf($post_id) {
-    // Only run for real posts, not ACF options or revisions
-    if (get_post_type($post_id) !== 'client') return;
+// After ACF saves any front‐end form:
+add_action('acf/save_post', function($post_id){
+  // Only for our Client CPT on front-end
+  if ( get_post_type($post_id) !== 'client' ) return;
 
-    // Get the organization_name field
-    $organization_name = get_field('organization_name', $post_id);
+  // Did Next come through?
+  if ( isset($_POST['acf_next_stage']) ) {
+    $next = sanitize_text_field($_POST['acf_next_stage']);
+    update_post_meta($post_id, 'client_stage', $next);
+  }
+   $org_name = get_field( 'organization_name', $post_id );
+   if ($org_name){
+     wp_update_post([
+        'ID'         => $post_id,
+        'post_title' => $org_name,
+        'post_name'  => sanitize_title( $org_name ),
+    ]);
+   }
+}, 20 );
 
-    if (!empty($organization_name)) {
-        // Update post title and slug
-        wp_update_post([
-            'ID'         => $post_id,
-            'post_title' => $organization_name,
-            'post_name'  => sanitize_title($organization_name),
-        ]);
-    }
-}
 
 
 
@@ -508,7 +511,7 @@ function get_client_email_data() {
     }
 
     $post_id = intval($_POST['post_id']);
-    $contact_email = get_field('contact_person_contact_email', $post_id);
+    $contact_email = get_field('top_management_contact_person_contact_email', $post_id);
     $pdf_url = get_field('f03_pdf', $post_id);
     $pdf_filename = basename($pdf_url);
     $client_name = get_the_title($post_id);  // Assuming client name is the post title

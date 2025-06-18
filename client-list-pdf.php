@@ -124,7 +124,7 @@ $clients = new WP_Query($args);
 
                             echo '<tr>';
 
-                            echo '<td> <a href="/create-client/?new_post_id=' . $post_id . '">' . esc_html($client_name) . '</a></td>';
+                            echo '<td> <a href="/create-client/?new_post_id=' . $post_id . '&stage=' . urlencode($client_status) . '">' . esc_html($client_name) . '</a></td>';
                             echo '<td>' . esc_html($certification_type) . '</td>';
                             echo '<td>' . esc_html($assigned_employee_name) . '</td>';
                             echo '<td class="text-uppercase">' . esc_html($client_status) . '</td>';

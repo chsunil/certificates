@@ -335,27 +335,7 @@ function get_certification_emails() {
          */
         'qms' => [
 
-            'f01'   => [
-                'subject'   => 'QMS Application Received',
-                'message'   => '
-                    <p>Dear {{client_name}},</p>
-                    <p>Thank you for submitting your QMS Application (F-01). Our review team will be in touch shortly.</p>
-                    <p>Best regards,<br/>QMS Certifications Team</p>
-                ',
-                'pdf_field' => '', // no PDF for F-01
-            ],
-
-            'f02'   => [
-                'subject'   => 'QMS Application Review Completed',
-                'message'   => '
-                    <p>Dear {{client_name}},</p>
-                    <p>Your QMS Application Review (F-02) is complete. Please find the review summary attached.</p>
-                    <p>Download: <a href="{{pdf_link}}">{{pdf_name}}</a></p>
-                    <p>Regards,<br/>QMS Certifications Team</p>
-                ',
-                'pdf_field' => 'f02_pdf',
-            ],
-
+          
             'f03'   => [
                 'subject'   => 'QMS Certification Agreement (F-03)',
                 'message'   => '
