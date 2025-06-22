@@ -339,3 +339,25 @@ padding: 6.75px 13.5px !important;
 vertical-align: middle !important;
 margin-bottom: 10px !important;
 }
+
+.class501040 table.acf-matrix-field tbody tr th {
+    width: 50%;
+}
+.class501040 table.acf-matrix-field tbody tr td:first-child{
+    width:100px;
+}
+/* Style for custom matrix field layout */
+.class501040 table.acf-matrix-field tr > th:first-child {
+  width: 40%;
+  min-width: 200px;
+}
+
+.class501040 table.acf-matrix-field tr > td:nth-child(2) {
+  width: 10%;
+  min-width: 80px;
+}
+
+/* Optional: shrink third column automatically */
+.class501040 table.acf-matrix-field tr > td:nth-child(3) {
+  width: auto;
+}

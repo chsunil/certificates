@@ -1,4 +1,5 @@
 <?php
+
 /**
  * certification-stages.php
  *
@@ -14,76 +15,32 @@
  */
 function get_certification_stages() {
     return [
-
-        /**
-         * ──────────────────────────────────────────────────────────────────────
-         * EXISTING EMS TRACK (UNCHANGED)
-         * ──────────────────────────────────────────────────────────────────────
-         */
         'ems' => [
 
-            // Draft (no form)
-            'draft' => [
-                'title'   => 'Draft',
-                'group'   => 'group_67dc014741369',
-                'next'    => 'f01',
-            ],
-
+            'draft' => ['title'   => 'Draft', 'group'   => 'group_67dc014741369', 'next'    => 'f01',],
             // F-01: EMS Application
-            'f01' => [
-                'title'   => 'F-01 EMS Application',
-                'group'   => 'group_68222fbec9c41',
-                'next'    => 'f02',
-            ],
+            'f01' => ['title' => 'F-01 EMS Application', 'group' => 'group_68222fbec9c41', 'next' => 'f02'],
 
             // F-02: EMS Application Review
-            'f02' => [
-                'title'   => 'F-02 EMS Application Review',
-                'group'   => 'group_qms_f02',
-                'next'    => 'f03',
-            ],
+            'f02' => ['title' => 'F-02 EMS Application Review', 'group' => 'group_qms_f02', 'next' => 'f03'],
 
             // F-03: Certification Agreement
-            'f03' => [
-                'title'   => 'F-03 Certification Agreement',
-                'group'   => 'group_qms_f03',
-                'next'    => 'f05',
-            ],
+            'f03' => ['title' => 'F-03 Certification Agreement', 'group' => 'group_qms_f03', 'next' => 'f05'],
 
             // F-05: Audit Team Allocation (Stage 1)
-            'f05' => [
-                'title'   => 'F-05 Audit Team Allocation',
-                'group'   => 'group_f05_ems_audit_team_allocation_plan_stage_1',
-                'next'    => 'f06',
-            ],
+            'f05' => ['title' => 'F-05 Audit Team Allocation', 'group' => 'group_f05_ems_audit_team_allocation_plan_stage_1', 'next' => 'f06'],
 
             // F-06: Document Review Report
-            'f06' => [
-                'title'   => 'F-06 Document Review Report',
-                'group'   => 'group_qms_f06',
-                'next'    => 'f07',
-            ],
+            'f06' => ['title' => 'F-06 Document Review Report', 'group' => 'group_qms_f06', 'next' => 'f07'],
 
             // F-07: Audit Schedule
-            'f07' => [
-                'title'   => 'F-07 Audit Schedule',
-                'group'   => 'group_qms_f07',
-                'next'    => 'f08',
-            ],
+            'f07' => ['title' => 'F-07 Audit Schedule', 'group' => 'group_qms_f07', 'next' => 'f08'],
 
             // F-08: Certificate Issuance
-            'f08' => [
-                'title'   => 'F-08 Certificate Issuance',
-                'group'   => 'group_qms_f08',
-                'next'    => 'f11',
-            ],
+            'f08' => ['title' => 'F-08 Certificate Issuance', 'group' => 'group_qms_f08', 'next' => 'f11'],
 
             // F-11: Invoice / Billing Details
-            'f11' => [
-                'title'   => 'F-11 Invoice / Billing Details',
-                'group'   => 'group_qms_f11',
-                'next'    => 'f09',
-            ],
+            'f11' => ['title' => 'F-11 Invoice / Billing Details', 'group' => 'group_qms_f11', 'next' => 'f09'],
 
             // F-09: Stage 1 Audit Report (no form yet)
             'f09' => [
@@ -93,11 +50,7 @@ function get_certification_stages() {
             ],
 
             // F-10: Non‐Conformity (uses F-13 fields)
-            'f10' => [
-                'title'   => 'F-10 Non-Conformity',
-                'group'   => 'group_qms_f13',
-                'next'    => 'f12',
-            ],
+            'f10' => ['title' => 'F-10 Non-Conformity', 'group' => 'group_qms_f13', 'next' => 'f12'],
 
             // F-12: Scope of Certification (no form yet)
             'f12' => [
@@ -107,34 +60,19 @@ function get_certification_stages() {
             ],
 
             // F-13: Corrective Action Request
-            'f13' => [
-                'title'   => 'F-13 Corrective Action Request',
-                'group'   => 'group_qms_f13',
-                'next'    => 'f14',
-            ],
+            'f13' => ['title' => 'F-13 Corrective Action Request', 'group' => 'group_qms_f13', 'next' => 'f14'],
 
             // F-14: Conflict of Interest Declaration
-            'f14' => [
-                'title'   => 'F-14 Conflict of Interest Declaration',
-                'group'   => 'group_67e69bef71256',
-                'next'    => 'sheet6',
-            ],
+            'f14' => ['title' => 'F-14 Conflict of Interest Declaration', 'group' => 'group_67e69bef71256', 'next' => 'sheet6'],
 
             // Sheet 6: Audit Notification Email (template‐only)
             'sheet6' => [
                 'title'     => 'QMS – Audit Notification Email',
                 'group'     => '',   // no ACF form; uses subject/message/pdf_field keys
                 'next'      => null,
-                'subject'   => 'QMS Attendance Sheet Stage 2',
-                'message'   => '
-                    <p>Dear {{client_name}},</p>
-                    <p>Your Attendance Sheet (F-13) is attached.</p>
-                    <p>Download: <a href="{{pdf_link}}">{{pdf_name}}</a></p>
-                ',
-                'pdf_field' => 'sheet6_pdf',
             ],
 
-        ], // end 'ems'
+        ],
 
 
         /**
@@ -147,124 +85,45 @@ function get_certification_stages() {
          */
         'qms' => [
 
-            // Draft (no form)
-            'draft' => [
-                'title'   => 'Draft',
-                'group'   => 'group_67dc014741369',  // same “draft” stub if needed
-                'next'    => 'f01',
-            ],
-
-            // F-01: QMS Application
-            'f01' => [
-                'title'   => 'F-01 QMS Application',
-                'group'   => 'group_68173ed286e57',  // this is the same ACF group as EMS’s F-01,
-                'next'    => 'f02',
-            ],
-
-            // F-02: QMS Application Review
-            'f02' => [
-                'title'   => 'F-02 QMS Application Review',
-                'group'   => 'group_f02_technical_review',
-                'next'    => 'f03',
-            ],
-
-            // F-03: QMS Certification Agreement
-            'f03' => [
-                'title'   => 'F-03 Certification Agreement',
-                'group'   => 'group_qms_f03',
-                'next'    => 'f05',
-            ],
-
-            // F-05: Audit Team Allocation (Stage 1)
-            'f05' => [
-                'title'   => 'F-05 Audit Team Allocation',
-                'group'   => 'group_f05_ems_audit_team_allocation_plan_stage_1',
-                'next'    => 'f06',
-            ],
-
-            // F-06: Document Review Report
-            'f06' => [
-                'title'   => 'F-06 Document Review Report',
-                'group'   => 'group_qms_f06',
-                'next'    => 'f07',
-            ],
-
-            // F-07: Audit Schedule
-            'f07' => [
-                'title'   => 'F-07 Audit Schedule',
-                'group'   => 'group_qms_f07',
-                'next'    => 'f08',
-            ],
-
-            // F-08: Certificate Issuance
-            'f08' => [
-                'title'   => 'F-08 Certificate Issuance',
-                'group'   => 'group_qms_f08',
-                'next'    => 'f11',
-            ],
-
-            // F-11: Invoice / Billing Details
-            'f11' => [
-                'title'   => 'F-11 Invoice / Billing Details',
-                'group'   => 'group_qms_f11',
-                'next'    => 'f09',
-            ],
-
-            // F-09: Stage 1 Audit Report (no form yet)
-            'f09' => [
-                'title'   => 'F-09 Stage 1 Audit Report',
-                'group'   => '',   // leave blank until an ACF group is added
-                'next'    => 'f10',
-            ],
-
-            // F-10: Non-Conformity (uses F-13 fields)
-            'f10' => [
-                'title'   => 'F-10 Non-Conformity',
-                'group'   => 'group_qms_f13',
-                'next'    => 'f12',
-            ],
-
-            // F-12: Scope of Certification (no form yet)
-            'f12' => [
-                'title'   => 'F-12 Scope of Certification',
-                'group'   => '',   // leave blank until an ACF group is added
-                'next'    => 'f13',
-            ],
-
-            // F-13: Corrective Action Request
-            'f13' => [
-                'title'   => 'F-13 Corrective Action Request',
-                'group'   => 'group_qms_f13',
-                'next'    => 'f14',
-            ],
-
-            // F-14: Conflict of Interest Declaration
-            'f14' => [
-                'title'   => 'F-14 Conflict of Interest Declaration',
-                'group'   => 'group_67e69bef71256',
-                'next'    => 'sheet6',
-            ],
-
-            // Sheet 6: Audit Notification Email (template‐only)
-            'sheet6' => [
-                'title'     => 'QMS – Audit Notification Email',
-                'group'     => '',  // no ACF form; use subject/message/pdf_field keys
-                'next'      => null,
-                'subject'   => 'QMS Attendance Sheet Stage 2',
-                'message'   => '
-                    <p>Dear {{client_name}},</p>
-                    <p>Your Attendance Sheet (F-13) is attached.</p>
-                    <p>Download: <a href="{{pdf_link}}">{{pdf_name}}</a></p>
-                ',
-                'pdf_field' => 'sheet6_pdf',
-            ],
-
+            'draft' => ['title' => 'Draft', 'group' => 'group_67dc014741369', 'next' => 'f01'],
+            'f01' => ['title'   => 'F-01 QMS Application', 'group'   => 'group_68173ed286e57', 'next'    => 'f02'],
+            'f02' => ['title' => 'F-02 QMS Application Review', 'group' => 'group_f02_technical_review', 'next' => 'f03'],
+            'f03' => ['title' => 'F-03 Certification Agreement', 'group' => 'group_qms_f03', 'next' => 'f05'],
+            'f05' => ['title' => 'F-05 Audit Team Allocation', 'group' => 'group_f05_ems_audit_team_allocation_plan_stage_1', 'next' => 'f14'],
+            'f14' => ['title' => 'F-14 Conflict of Interest Declaration', 'group' => 'group_qms_f14', 'next' => 'sheet6'],
+            'sheet6' => ['title' => 'Sheet6 QMS – Audit Notification Email', 'group' => 'group_qms_sheet6',  'next' => 'f08'],
+            'f08' => ['title' => 'F-08 Certificate Issuance', 'group' => 'group_qms_f08', 'next' => 'f06'],
+            'f06' => ['title' => 'F-06 Document Review Report', 'group' => 'group_qms_f06', 'next' => 'f11'],
+            'f11' => ['title' => 'F-11 Invoice / Billing Details', 'group' => 'group_qms_f11', 'next' => 'f13'],
+            'f13' => ['title' => 'F-13 Corrective Action Request', 'group' => 'group_qms_f13', 'next' => 'f05a'],
+            // 'draft' => ['title' => 'Draft', 'group' => 'group_67dc014741369', 'next' => 'f01', 'pdf' => false, 'email' => false],
+            // 'f01' => ['title' => 'F-01 QMS Application', 'group' => 'group_68173ed286e57', 'next' => 'f02', 'pdf' => false, 'email' => false],
+            // 'f02' => ['title' => 'F-02 QMS Application Review', 'group' => 'group_f02_technical_review', 'next' => 'f03', 'pdf' => false, 'email' => false],
+            // 'f03' => ['title' => 'F-03 Certification Agreement', 'group' => 'group_qms_f03', 'next' => 'f05', 'pdf' => true, 'email' => true],
+            // 'f05' => ['title' => 'F-05 Audit Team Allocation', 'group' => 'group_f05_ems_audit_team_allocation_plan_stage_1', 'next' => 'f14', 'pdf' => false, 'email' => false],
+            // 'f14' => ['title' => 'F-14 Conflict of Interest Declaration', 'group' => 'group_qms_f14', 'next' => 'sheet6', 'pdf' => false, 'email' => false],
+            // 'sheet6' => ['title' => 'Sheet6 QMS – Audit Notification Email', 'group' => '', 'next' => 'f08', 'pdf' => true, 'email' => true],
+            // 'f08' => ['title' => 'F-08 Certificate Issuance', 'group' => 'group_qms_f08', 'next' => 'f06', 'pdf' => true, 'email' => true],
+            // 'f06' => ['title' => 'F-06 Document Review Report', 'group' => 'group_qms_f06', 'next' => 'f11', 'pdf' => true, 'email' => true],
+            // 'f11' => ['title' => 'F-11 Invoice / Billing Details', 'group' => 'group_qms_f11', 'next' => 'f13', 'pdf' => true, 'email' => true],
+            // 'f13' => ['title' => 'F-13 Corrective Action Request', 'group' => 'group_qms_f13', 
+            'f05a' => ['title' => 'need to create', 'group' => 'group_f05_ems_audit_team_allocation_plan_stage_1', 'next' => 'f07'],
+            'f07' => ['title' => 'F-07 Audit Schedule', 'group' => 'group_qms_f07', 'next' => 'sheet12'],
+            'sheet12' => ['title' => 'need to create', 'group' => '',  'next' => 'f08a'],
+            'f08a' => ['title' => 'need to create', 'group' => '',  'next' => 'f09'],
+            'f09' => ['title' => 'F-09 Stage 1 Audit Report', 'group' => '', 'next' => 'f12'],
+            'f12' => ['title' => 'F-12 Scope of Certification', 'group' => '', 'next' => 'f13a'],
+            'f13a' => ['title' => 'need to create', 'group' => '',  'next' => 'f16'],
+            'f16' => ['title' => 'need to create', 'group' => '',  'next' => 'f17'],
+            'f17' => ['title' => 'need to create', 'group' => '',  'next' => 'f24'],
+            'f24' => ['title' => 'need to create', 'group' => '',  'next' => 'f19'],
+            'f19' => ['title' => 'need to create', 'group' => '',  'next' => 'f15'],
+            'f15' => ['title' => 'need to create', 'group' => '',  'next' => 'f25'],
+            'f25' => ['title' => 'need to create', 'group' => '',  'next' => 'f10'],
         ], // end 'qms'
 
     ];
 }
-
-
 /**
  * Returns all email templates for each certification track.
  * 
@@ -335,7 +194,7 @@ function get_certification_emails() {
          */
         'qms' => [
 
-          
+
             'f03'   => [
                 'subject'   => 'QMS Certification Agreement (F-03)',
                 'message'   => '
@@ -426,5 +285,12 @@ function get_certification_emails() {
 
         ], // end 'qms'
 
+    ];
+}
+
+function get_certification_pdf() {
+    return [
+        'ems' => ['f03', 'sheet6', 'f06', 'f08', 'f11'],
+        'qms' => ['f03', 'sheet6', 'f06', 'f08', 'f11'],
     ];
 }

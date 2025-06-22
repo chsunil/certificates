@@ -1,7 +1,27 @@
 <?php
+if ( $_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['send_email']) ) {
+  if ( ! wp_verify_nonce($_POST['send_email_nonce'],'send_email_action') ) {
+    echo '<div class="alert alert-warning">Security check failed.</div>';
+  } else {
+    $to      = sanitize_email( $_POST['to_email'] );
+    $subject = sanitize_text_field( $_POST['subject'] );
+    $message = wp_kses_post( $_POST['message'] );
+    $pdf     = esc_url_raw( $_POST['pdf_attachment'] );
+    $headers = ['Content-Type: text/html; charset=UTF-8'];
+    $sent    = wp_mail( $to, $subject, nl2br($message), $headers, [ $pdf ] );
+    if ( $sent ) {
+      echo '<div class="alert alert-success">Email sent successfully!</div>';
+    } else {
+      echo '<div class="alert alert-danger">Failed to send email.</div>';
+    }
+  }
+}
+?>
+<?php
 /**
  * Template Name: Multi-Step ACF Form with Tabs
  */
+
 acf_form_head();
 get_header();
 
@@ -10,7 +30,7 @@ $new_id      = $_GET['new_post_id'] ?? '';
 $stage_param = sanitize_text_field($_GET['stage'] ?? 'draft');
 
 // 2) All stages & current stage
-$type   = get_field('certification_type');
+$type   = get_field('certification_type', $new_id);
 
 $stages = get_certification_stages()[ $type ] ?? [];
 
@@ -94,6 +114,7 @@ echo $current_url = add_query_arg(
         ]);
         echo '<div class="row">';
         get_template_part('template-parts/client/stage','generic');
+         get_template_part( 'template-parts/client/send-email-modal' );
         echo '</div>';
 
       else:

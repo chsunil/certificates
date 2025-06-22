@@ -106,17 +106,7 @@ function restrict_clients_by_assigned_employee($query) {
 }
 add_action('pre_get_posts', 'restrict_clients_by_assigned_employee');
 
-// Localize script for AJAX functionality
-function enqueue_create_post_script() {
-    wp_enqueue_script('create-post-js', get_stylesheet_directory_uri() . '/js/create-post.js', array('jquery'), null, true);
 
-    // Localize nonce for AJAX requests
-    wp_localize_script('create-post-js', 'wp_vars', array(
-        'ajax_url' => admin_url('admin-ajax.php'),
-        'create_post_nonce' => wp_create_nonce('create_post_nonce')  // Create nonce for security
-    ));
-}
-// add_action('wp_enqueue_scripts', 'enqueue_create_post_script');
 
 class Astra_Custom_Walker extends Walker_Nav_Menu {
     public function start_lvl(&$output, $depth = 0, $args = null) {
@@ -225,11 +215,40 @@ add_action('wp_enqueue_scripts', 'enqueue_custom_scripts');
 // }
 // add_action('wp_enqueue_scripts', 'enqueue_send_email_script');
 
+
+// Bootstrap
+function custom_enqueue_bootstrap_assets() {
+    // Bootstrap CSS
+    wp_enqueue_style(
+        'bootstrap-css',
+        'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css',
+        array(),
+        '5.3.3'
+    );
+
+    // Bootstrap JS (Bundle includes Popper)
+    wp_enqueue_script(
+        'bootstrap-js',
+        'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js',
+        array(),
+        '5.3.3',
+        true
+    );
+}
+add_action('wp_enqueue_scripts', 'custom_enqueue_bootstrap_assets');
+
+// FOnt Awsome
+
+function enqueue_custom_sidebar_styles() {
+    wp_enqueue_style('fontawesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css');
+}
+add_action('wp_enqueue_scripts', 'enqueue_custom_sidebar_styles');
+
 function enqueue_send_email_script() {
     wp_enqueue_script(
         'send-email-js',
         get_stylesheet_directory_uri() . '/js/send-email.js',
-        ['jquery'],
+        ['bootstrap-js'],
         null,
         true
     );
@@ -240,7 +259,7 @@ function enqueue_send_email_script() {
         'send_pdf_email_nonce'      => wp_create_nonce('send_pdf_email_nonce'),
     ]);
 }
-add_action('wp_enqueue_scripts','enqueue_send_email_script');
+// add_action('wp_enqueue_scripts','enqueue_send_email_script');
 
 
 
@@ -328,36 +347,6 @@ add_shortcode('assigned_employee_name', 'get_assigned_employee_name_shortcode');
 
 ?>
 <?php
-// Bootstrap
-function custom_enqueue_bootstrap_assets() {
-    // Bootstrap CSS
-    wp_enqueue_style(
-        'bootstrap-css',
-        'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css',
-        array(),
-        '5.3.3'
-    );
-
-    // Bootstrap JS (Bundle includes Popper)
-    wp_enqueue_script(
-        'bootstrap-js',
-        'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js',
-        array(),
-        '5.3.3',
-        true
-    );
-}
-add_action('wp_enqueue_scripts', 'custom_enqueue_bootstrap_assets');
-
-// FOnt Awsome
-
-function enqueue_custom_sidebar_styles() {
-    wp_enqueue_style('fontawesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css');
-}
-add_action('wp_enqueue_scripts', 'enqueue_custom_sidebar_styles');
-
-?>
-<?php
 // Make 'ajaxurl' available to JS
 add_action('wp_head', function () {
 ?>
@@ -392,7 +381,30 @@ function prefill_f02_technical_review_rows($value, $post_id, $field) {
         ];
     }, $rows);
 }
+add_filter('acf/load_value/name=technical_review_items_copy', 'prefill_f02_technical_review_rowsf14', 10, 3);
+function prefill_f02_technical_review_rowsf14($value, $post_id, $field) {
+    if (!empty($value)) return $value;
 
+    $rows = [
+        'If the information about the applicant organization and its management system in application and supporting documents is sufficient for the conduct of the audit and developing the audit programme?',
+        'If the requirements for certification are clearly defined and documented, and have been provided to the applicant organization?',
+        'If any known difference in understanding between GMCSPL and the applicant organization is resolved?',
+        'If GMCSPL has the required personnel competent in the technical area and in the geographical area?',
+        'If the certification scheme and scope applied by the organization falls under the accreditation granted to GMCSPL?',
+        'Checked Location(s) of the applicant organization’s operations, number of sites etc.?',
+        'If interpreters are required?',
+        'If there are any PPE requirements for Visitors?',
+        'Any threats to impartiality?',
+    ];
+
+    return array_map(function ($requirement) {
+        return [
+            'field_f02_requirement' => $requirement, // static
+            'field_f02_review'      => '',           // user will fill
+            'field_f02_conclusion'  => '',           // dropdown
+        ];
+    }, $rows);
+}
 add_action('acf/input/admin_footer', 'lock_review_fields');
 function lock_review_fields() {
 ?>
@@ -579,3 +591,8 @@ function send_pdf_email(){
 }
 
 add_action('wp_ajax_nopriv_send_pdf_email', 'send_pdf_email');
+// Disable ACF clone field to edit
+add_filter('acf/prepare_field/type=clone', function($field) {
+    $field['disabled'] = true;
+    return $field;
+});

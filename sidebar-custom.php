@@ -1,4 +1,4 @@
-<div class="wrapper">
+<div class="wrapper d-none d-sm-block">
     <!-- Sidebar -->
     <nav id="sidebar" class="">
         <div class="custom-menu">

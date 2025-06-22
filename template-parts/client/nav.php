@@ -15,7 +15,7 @@ $keys      = array_keys($stages);
 $idx       = array_search($current, $keys, true);
 $visible   = array_slice($keys, 0, $idx+1);
 ?>
-<ul class="nav nav-tabs flex-nowrap">
+<ul class="nav nav-pills flex-nowrap mx-0">
   <?php foreach($visible as $slug):
     $step    = $stages[$slug];
     $classes = ['nav-link'];
